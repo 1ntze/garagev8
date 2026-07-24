@@ -16,6 +16,7 @@ window.addEventListener("scroll", () => {
 
 });
 
+// Trocar Slider
 const slides = document.querySelectorAll(".slide");
 
 let current = 0;
