@@ -1,52 +1,34 @@
-# 📚 Pesquisa e Referências
+# 🚗 Garage V8
 
-Este documento reúne as fontes utilizadas pelo grupo durante a pesquisa,
-ideação e desenvolvimento do Projeto Integrador II.
+Sistema de agendamento e orçamento para uma estética automotiva, desenvolvido como parte do **Projeto Integrador II (PI 2)**.
 
-O objetivo é registrar onde estamos buscando referências, exemplos de
-projetos anteriores e possíveis soluções para o nosso sistema.
+O sistema tem como objetivo facilitar o atendimento aos clientes da Garage V8, permitindo a consulta de serviços, solicitação de orçamentos e agendamento de horários, além de oferecer ao proprietário ferramentas para gerenciamento dos serviços e atendimentos.
 
-## 🎓 Projetos Integradores da UNIVESP
+---
 
-### Repositório de Projetos Integradores
-https://apps.univesp.br/tcc-pi/pi/
+## 🎯 Objetivo do Projeto
 
-Repositório oficial da UNIVESP com projetos desenvolvidos por alunos,
-utilizado pelo grupo para analisar projetos anteriores e buscar
-referências de funcionalidades, organização e apresentação.
+Desenvolver uma solução que centralize e automatize parte do processo de atendimento da estética automotiva, desde o primeiro contato do cliente até o agendamento e acompanhamento do serviço.
 
-### Projetos que podem servir de referência
+A proposta é reduzir a necessidade de atendimento manual, facilitar a organização dos horários e melhorar a experiência do cliente.
 
-- Projeto A — motivo pelo qual é relevante
-- Projeto B — funcionalidade interessante encontrada
-- Projeto C — ideia que podemos adaptar
+### Fluxo principal
 
-## 🔎 Pesquisas
-
-### Sistemas de agendamento
-- [Link]
-- [Link]
-
-### Estética automotiva
-- [Link]
-- [Link]
-
-### Integração com WhatsApp
-- [Link]
-- [Link]
-
-### UX/UI
-- [Link]
-- [Link]
-
-## 💡 Insights encontrados
-
-- Ideia 1 — fonte: Projeto X
-- Ideia 2 — fonte: Projeto Y
-- Ideia 3 — fonte: artigo/site X
-
-## ⚠️ Observações
-
-As referências acima são utilizadas como inspiração e estudo.
-As soluções desenvolvidas pelo grupo serão adaptadas às necessidades
-identificadas junto à Garage V8.
+```text
+Cliente
+   ↓
+Consulta de serviços
+   ↓
+Escolha do veículo e serviço
+   ↓
+Solicitação de orçamento
+   ↓
+Escolha do horário
+   ↓
+Agendamento
+   ↓
+Confirmação pelo WhatsApp
+   ↓
+Realização do serviço
+   ↓
+Pós-venda
