@@ -700,3 +700,521 @@ footer a:hover{
     }
 
 }
+/* ================================
+   CARROSSEL GARAGE V8
+================================ */
+
+.garage-carousel {
+    width: 100%;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+}
+
+.carousel-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.carousel-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.8s ease;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Escurece a imagem */
+
+.carousel-slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.85),
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0.15)
+        );
+}
+
+/* Texto */
+
+.carousel-content {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    max-width: 600px;
+    color: #fff;
+}
+
+.carousel-content span {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #cfcfcf;
+}
+
+.carousel-content h2 {
+    font-size: 52px;
+    line-height: 1.1;
+    margin: 15px 0;
+    font-weight: 800;
+}
+
+.carousel-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #ddd;
+    margin-bottom: 30px;
+    max-width: 500px;
+}
+
+/* Botão */
+
+.carousel-button {
+    display: inline-block;
+    padding: 14px 28px;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.carousel-button:hover {
+    background: #ddd;
+    transform: translateY(-2px);
+}
+
+/* Setas */
+
+.carousel-arrow {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 50px;
+    height: 50px;
+
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+
+    background: rgba(0,0,0,0.3);
+    color: white;
+
+    font-size: 22px;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.carousel-arrow:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.carousel-prev {
+    left: 30px;
+}
+
+.carousel-next {
+    right: 30px;
+}
+
+/* Bolinhas */
+
+.carousel-indicators {
+    position: absolute;
+    z-index: 5;
+
+    bottom: 30px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 10px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.5);
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.carousel-dot.active {
+    width: 30px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+
+/* ================================
+   RESPONSIVO
+================================ */
+
+@media (max-width: 768px) {
+
+    .garage-carousel {
+        height: 500px;
+    }
+
+    .carousel-content {
+        left: 8%;
+        right: 8%;
+    }
+
+    .carousel-content h2 {
+        font-size: 36px;
+    }
+
+    .carousel-content p {
+        font-size: 16px;
+    }
+
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .carousel-prev {
+        left: 15px;
+    }
+
+    .carousel-next {
+        right: 15px;
+    }
+}
+
+/* ================================
+   CARROSSEL GARAGE V8
+================================ */
+
+.garage {
+    width: 100%;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+}
+
+.garage-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.garage-item {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 0.8s ease;
+}
+
+.garage-item.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Imagem */
+
+.garage-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Escurecimento da imagem */
+
+.garage-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.15)
+    );
+}
+
+
+/* Texto */
+
+.garage-text {
+    position: absolute;
+    z-index: 2;
+
+    top: 50%;
+    left: 10%;
+
+    transform: translateY(-50%);
+
+    max-width: 600px;
+
+    color: #fff;
+}
+
+.garage-text span {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+}
+
+.garage-text h2 {
+    font-size: 52px;
+    line-height: 1.1;
+
+    margin: 15px 0;
+
+    font-weight: 800;
+}
+
+.garage-text p {
+    font-size: 18px;
+    line-height: 1.6;
+
+    color: #ddd;
+
+    margin-bottom: 30px;
+
+    max-width: 500px;
+}
+
+
+/* Botão */
+
+.garage-btn {
+    display: inline-block;
+
+    padding: 14px 28px;
+
+    background: #fff;
+    color: #111;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    border-radius: 4px;
+
+    transition: 0.3s;
+}
+
+.garage-btn:hover {
+    background: #ddd;
+    transform: translateY(-2px);
+}
+
+
+/* ================================
+   SETAS
+================================ */
+
+.garage-arrow {
+    position: absolute;
+    z-index: 5;
+
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 50px;
+    height: 50px;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.35);
+
+    color: white;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.garage-arrow:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.garage-left {
+    left: 30px;
+}
+
+.garage-right {
+    right: 30px;
+}
+
+
+/* ================================
+   INDICADORES
+================================ */
+
+.garage-indicators {
+    position: absolute;
+    z-index: 5;
+
+    bottom: 30px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    display: flex;
+    gap: 10px;
+}
+
+.garage-point {
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.5);
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.garage-point.active {
+    width: 30px;
+
+    border-radius: 10px;
+
+    background: #fff;
+}
+
+
+/* ================================
+   RESPONSIVO
+================================ */
+
+@media (max-width: 768px) {
+
+    .garage {
+        height: 500px;
+    }
+
+    .garage-text {
+        left: 8%;
+        right: 8%;
+    }
+
+    .garage-text h2 {
+        font-size: 36px;
+    }
+
+    .garage-text p {
+        font-size: 16px;
+    }
+
+    .garage-arrow {
+        width: 40px;
+        height: 40px;
+    }
+
+    .garage-left {
+        left: 15px;
+    }
+
+    .garage-right {
+        right: 15px;
+    }
+}
+
+.reels {
+    padding: 80px 8%;
+    background: #0b0b0b;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title span {
+    color: #7e0c0c;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.section-title h2 {
+    color: #fff;
+    font-size: 36px;
+    margin: 10px 0;
+}
+
+.section-title h2 strong {
+    color: #a41010;
+}
+
+.section-title p {
+    color: #aaa;
+    max-width: 600px;
+    margin: auto;
+}
+
+.reels-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.reel {
+    overflow: hidden;
+    border-radius: 15px;
+    background: #111;
+    min-height: 500px;
+}
+
+.reel iframe {
+    width: 100%;
+    height: 550px;
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .reels-container {
+        grid-template-columns: 1fr;
+    }
+}

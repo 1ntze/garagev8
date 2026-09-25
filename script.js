@@ -36,3 +36,5 @@ function trocarSlide(){
 }
 
 setInterval(trocarSlide, 5000);
+
+
