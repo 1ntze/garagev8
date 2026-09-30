@@ -164,7 +164,14 @@ nav a:hover::after {
     width: 100%;
 }
 
+/* Item ativo */
+nav a.active {
+    color: var(--primary);
+}
 
+nav a.active::after {
+    width: 100%;
+}
 /* ==========================
    MENU MOBILE
 ========================== */
@@ -2047,4 +2054,1171 @@ footer p {
         font-size: 1.6rem;
     }
 
+}
+
+
+/* =========================================================
+   PÁGINA — ESTÉTICA AUTOMOTIVA
+========================================================= */
+
+
+/* =========================
+   HERO
+========================= */
+
+.servico-hero {
+    position: relative;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.92) 0%,
+            rgba(0, 0, 0, 0.70) 50%,
+            rgba(0, 0, 0, 0.45) 100%
+        ),
+        url("img/index/BMW.mp4");
+
+    background-size: cover;
+    background-position: center;
+}
+
+.servico-hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 75% 50%,
+            rgba(217, 4, 41, 0.18),
+            transparent 40%
+        );
+
+    pointer-events: none;
+}
+
+.servico-hero-content {
+    position: relative;
+    z-index: 2;
+
+    width: min(1200px, 90%);
+    margin: 0 auto;
+
+    padding: 100px 0 80px;
+}
+
+.servico-tag {
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    color: #d90429;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+}
+
+.servico-hero h1 {
+    margin: 0;
+
+    color: #fff;
+
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    line-height: 0.95;
+    font-weight: 700;
+
+    letter-spacing: -3px;
+}
+
+.servico-hero h1 strong {
+    color: #d90429;
+}
+
+.servico-hero p {
+    max-width: 600px;
+
+    margin: 30px 0;
+
+    color: #d5d5d5;
+
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+
+/* =========================
+   BOTÃO
+========================= */
+
+.servico-hero .btn-primary,
+.servico-cta .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 25px;
+
+    color: #fff;
+    background: #d90429;
+
+    border-radius: 4px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.3s ease;
+}
+
+.servico-hero .btn-primary:hover,
+.servico-cta .btn-primary:hover {
+    transform: translateY(-3px);
+
+    background: #ef233c;
+
+    box-shadow: 0 10px 30px rgba(217, 4, 41, 0.25);
+}
+
+
+/* =========================
+   APRESENTAÇÃO
+========================= */
+
+.servico-apresentacao {
+    padding: 110px 0;
+
+    background: #0f0f0f;
+}
+
+.servico-apresentacao .container {
+    width: min(1200px, 90%);
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+
+    gap: 80px;
+
+    align-items: center;
+}
+
+.section-tag {
+    color: #d90429;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+.servico-texto h2 {
+    margin: 18px 0 25px;
+
+    color: #fff;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+}
+
+.servico-texto h2 strong {
+    color: #d90429;
+}
+
+.servico-texto p {
+    margin-bottom: 20px;
+
+    color: #aaa;
+
+    line-height: 1.8;
+    font-size: 0.98rem;
+}
+
+
+/* =========================
+   DESTAQUES
+========================= */
+
+.servico-destaque {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.destaque-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    padding: 25px;
+
+    background: #171717;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    border-left: 3px solid #d90429;
+
+    transition: 0.3s ease;
+}
+
+.destaque-item:hover {
+    transform: translateX(6px);
+
+    background: #1b1b1b;
+
+    border-color: rgba(217, 4, 41, 0.35);
+}
+
+.destaque-item > i {
+    min-width: 45px;
+
+    color: #d90429;
+
+    font-size: 1.5rem;
+
+    text-align: center;
+}
+
+.destaque-item h3 {
+    margin: 0 0 6px;
+
+    color: #fff;
+
+    font-size: 1rem;
+}
+
+.destaque-item p {
+    margin: 0;
+
+    color: #888;
+
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   PROCESSO
+========================= */
+
+.servico-processo {
+    padding: 110px 0;
+
+    background: #141414;
+}
+
+.servico-processo .container {
+    width: min(1200px, 90%);
+    margin: auto;
+}
+
+.servico-processo .section-title {
+    max-width: 700px;
+
+    margin: 0 auto 60px;
+
+    text-align: center;
+}
+
+.servico-processo .section-title span {
+    color: #d90429;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+.servico-processo .section-title h2 {
+    margin: 18px 0;
+
+    color: #fff;
+
+    font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.servico-processo .section-title h2 strong {
+    color: #d90429;
+}
+
+.servico-processo .section-title p {
+    color: #888;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   CARDS DO PROCESSO
+========================= */
+
+.processo-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+.processo-card {
+    position: relative;
+
+    padding: 40px 30px;
+
+    background: #0f0f0f;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+
+    transition: 0.3s ease;
+}
+
+.processo-card:hover {
+    transform: translateY(-8px);
+
+    border-color: rgba(217, 4, 41, 0.5);
+}
+
+.processo-card > span {
+    position: absolute;
+
+    top: 20px;
+    right: 25px;
+
+    color: rgba(217, 4, 41, 0.25);
+
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.processo-card > i {
+    margin-bottom: 25px;
+
+    color: #d90429;
+
+    font-size: 2rem;
+}
+
+.processo-card h3 {
+    margin: 0 0 12px;
+
+    color: #fff;
+
+    font-size: 1.2rem;
+}
+
+.processo-card p {
+    margin: 0;
+
+    color: #888;
+
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+
+/* =========================
+   CTA
+========================= */
+
+.servico-cta {
+    position: relative;
+
+    min-height: 450px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.78),
+            rgba(0, 0, 0, 0.88)
+        ),
+        url("img/carro1.jpg");
+
+    background-size: cover;
+    background-position: center;
+}
+
+.servico-cta-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(217, 4, 41, 0.15),
+            transparent 60%
+        );
+}
+
+.servico-cta-content {
+    position: relative;
+    z-index: 2;
+
+    width: min(750px, 90%);
+
+    text-align: center;
+}
+
+.servico-cta-content > span {
+    color: #d90429;
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+.servico-cta-content h2 {
+    margin: 18px 0;
+
+    color: #fff;
+
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.1;
+}
+
+.servico-cta-content h2 strong {
+    color: #d90429;
+}
+
+.servico-cta-content p {
+    max-width: 600px;
+
+    margin: 0 auto 30px;
+
+    color: #bbb;
+
+    line-height: 1.7;
+}
+
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 900px) {
+
+    .servico-apresentacao .container {
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+    }
+
+    .processo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .servico-hero {
+        min-height: 580px;
+    }
+
+    .servico-hero-content {
+        padding: 90px 0 60px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .servico-hero {
+        min-height: 540px;
+    }
+
+    .servico-hero-content {
+        width: 88%;
+    }
+
+    .servico-hero h1 {
+        font-size: 3.2rem;
+
+        letter-spacing: -2px;
+    }
+
+    .servico-hero p {
+        font-size: 0.9rem;
+    }
+
+    .servico-apresentacao,
+    .servico-processo {
+        padding: 75px 0;
+    }
+
+    .servico-apresentacao .container,
+    .servico-processo .container {
+        width: 88%;
+    }
+
+    .servico-texto h2 {
+        font-size: 2.2rem;
+    }
+
+    .destaque-item {
+        padding: 20px;
+
+        gap: 15px;
+    }
+
+    .processo-card {
+        padding: 30px 25px;
+    }
+
+    .servico-cta {
+        min-height: 500px;
+    }
+
+    .servico-cta-content h2 {
+        font-size: 2.4rem;
+    }
+
+}
+
+/* =========================================================
+   LAVAGEM — NÍVEL 1, 2 E 3
+========================================================= */
+
+
+
+.lavagens {
+    position: relative;
+    padding: 130px 0;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            135deg,
+            #080808 0%,
+            #101010 50%,
+            #080808 100%
+        );
+}
+
+
+/* =========================
+   TEXTURA DE FUNDO
+========================= */
+
+.lavagens::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 45px 45px;
+
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 20%,
+        black 80%,
+        transparent
+    );
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   DETALHE VERMELHO
+========================= */
+
+.lavagens::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    top: 10%;
+    left: -300px;
+
+    border-radius: 50%;
+
+    background: #d90429;
+
+    filter: blur(180px);
+
+    opacity: 0.10;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   TÍTULO
+========================= */
+
+.lavagens .section-title {
+    position: relative;
+    z-index: 2;
+
+    width: min(850px, 90%);
+
+    margin: 0 auto 80px;
+
+    text-align: center;
+}
+
+.lavagens .section-title span {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #d90429;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    letter-spacing: 4px;
+}
+
+.lavagens .section-title span::before,
+.lavagens .section-title span::after {
+    content: "";
+
+    width: 30px;
+    height: 1px;
+
+    background: #d90429;
+}
+
+.lavagens .section-title h2 {
+    margin: 20px 0;
+
+    color: #fff;
+
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+
+    line-height: 1;
+
+    letter-spacing: -2px;
+}
+
+.lavagens .section-title h2 strong {
+    display: block;
+
+    color: #d90429;
+
+    font-weight: 700;
+}
+
+.lavagens .section-title p {
+    max-width: 600px;
+
+    margin: 25px auto 0;
+
+    color: #777;
+
+    font-size: 0.9rem;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.lavagens-grid {
+    position: relative;
+    z-index: 2;
+
+    width: min(1250px, 90%);
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.lavagem-card {
+    position: relative;
+
+    min-height: 430px;
+
+    padding: 40px 35px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.055),
+            rgba(255,255,255,0.015)
+        );
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    clip-path: polygon(
+        0 0,
+        calc(100% - 25px) 0,
+        100% 25px,
+        100% 100%,
+        0 100%
+    );
+
+    transition:
+        transform 0.4s ease,
+        border-color 0.4s ease,
+        background 0.4s ease;
+}
+
+
+/* LINHA SUPERIOR */
+
+.lavagem-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background: linear-gradient(
+        90deg,
+        #d90429,
+        transparent
+    );
+}
+
+
+/* BRILHO */
+
+.lavagem-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 250px;
+    height: 250px;
+
+    top: -150px;
+    right: -150px;
+
+    border-radius: 50%;
+
+    background: #d90429;
+
+    filter: blur(100px);
+
+    opacity: 0;
+
+    transition: 0.5s ease;
+}
+
+
+/* HOVER */
+
+.lavagem-card:hover {
+    transform: translateY(-12px);
+
+    border-color: rgba(217,4,41,0.45);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(217,4,41,0.08),
+            rgba(255,255,255,0.02)
+        );
+}
+
+.lavagem-card:hover::after {
+    opacity: 0.15;
+}
+
+
+/* =========================================================
+   NÚMERO GIGANTE
+========================================================= */
+
+.lavagem-card .nivel {
+    position: absolute;
+
+    top: 20px;
+    right: 25px;
+
+    color: rgba(255,255,255,0.035);
+
+    font-size: 8rem;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: -8px;
+
+    user-select: none;
+}
+
+
+/* =========================================================
+   PEQUENO IDENTIFICADOR
+========================================================= */
+
+.lavagem-card::marker {
+    display: none;
+}
+
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.lavagem-card > i {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+
+    margin-bottom: 35px;
+
+    color: #fff;
+
+    background: #d90429;
+
+    font-size: 1.2rem;
+
+    clip-path: polygon(
+        0 0,
+        80% 0,
+        100% 20%,
+        100% 100%,
+        20% 100%,
+        0 80%
+    );
+
+    box-shadow:
+        0 0 25px rgba(217,4,41,0.25);
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.lavagem-card h3 {
+    position: relative;
+    z-index: 2;
+
+    margin: 0 0 18px;
+
+    color: #fff;
+
+    font-size: 1.5rem;
+
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+}
+
+.lavagem-card h3::after {
+    content: "";
+
+    display: block;
+
+    width: 35px;
+    height: 2px;
+
+    margin-top: 12px;
+
+    background: #d90429;
+
+    transition: width 0.3s ease;
+}
+
+.lavagem-card:hover h3::after {
+    width: 80px;
+}
+
+
+/* =========================================================
+   DESCRIÇÃO
+========================================================= */
+
+.lavagem-card p {
+    position: relative;
+    z-index: 2;
+
+    margin: 0;
+
+    color: #858585;
+
+    font-size: 0.88rem;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   LISTA
+========================================================= */
+
+.lavagem-card ul {
+    position: relative;
+    z-index: 2;
+
+    margin: 28px 0 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.lavagem-card li {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 9px 0;
+
+    color: #aaa;
+
+    font-size: 0.82rem;
+
+    border-bottom: 1px solid rgba(255,255,255,0.045);
+}
+
+.lavagem-card li:last-child {
+    border-bottom: none;
+}
+
+.lavagem-card li::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    background: #d90429;
+
+    transform: rotate(45deg);
+
+    box-shadow: 0 0 8px rgba(217,4,41,0.5);
+}
+
+
+/* =========================================================
+   CARD CENTRAL — DESTAQUE
+========================================================= */
+
+.lavagem-card.destaque {
+    transform: translateY(-25px);
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(217,4,41,0.13),
+            rgba(15,15,15,0.95) 55%
+        );
+
+    border-color: rgba(217,4,41,0.35);
+}
+
+.lavagem-card.destaque:hover {
+    transform: translateY(-35px);
+}
+
+
+/* LINHA CENTRAL */
+
+.lavagem-card.destaque::before {
+    height: 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #d90429,
+            transparent
+        );
+}
+
+
+/* =========================================================
+   ETIQUETA PREMIUM
+========================================================= */
+
+.lavagem-card.destaque .nivel::after {
+    content: "PREMIUM";
+
+    position: absolute;
+
+    top: 95px;
+    right: 0;
+
+    color: #d90429;
+
+    font-size: 0.65rem;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .lavagens-grid {
+        grid-template-columns: 1fr;
+
+        max-width: 650px;
+    }
+
+    .lavagem-card {
+        min-height: 360px;
+    }
+
+    .lavagem-card.destaque {
+        transform: none;
+    }
+
+    .lavagem-card.destaque:hover {
+        transform: translateY(-12px);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .lavagens {
+        padding: 90px 0;
+    }
+
+    .lavagens .section-title {
+        margin-bottom: 50px;
+    }
+
+    .lavagens .section-title h2 {
+        font-size: 2.5rem;
+    }
+
+    .lavagens-grid {
+        width: 88%;
+    }
+
+    .lavagem-card {
+        min-height: auto;
+
+        padding: 35px 28px;
+    }
+
+    .lavagem-card .nivel {
+        font-size: 6rem;
+    }
+
+}
+
+/* ==========================
+   VÍDEO DO SERVIÇO
+=========================== */
+
+.video-servico {
+    padding: 100px 0;
+    background: #0f0f0f;
+    position: relative;
+    overflow: hidden;
+}
+
+.video-servico .section-title {
+    margin-bottom: 50px;
+}
+
+.video-servico .section-title span {
+    color: #d90429;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.video-servico .section-title h2 {
+    color: #fff;
+    font-size: 2.5rem;
+    margin: 12px 0;
+}
+
+.video-servico .section-title h2 strong {
+    color: #d90429;
+}
+
+.video-servico .section-title p {
+    color: #999;
+}
+
+
+/* VÍDEO */
+
+.video-reel {
+    width: 360px;
+    aspect-ratio: 9 / 16;
+    margin: 0 auto;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.7);
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    transition: 0.4s ease;
+}
+
+.video-reel:hover {
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.8),
+        0 0 35px rgba(217, 4, 41, 0.15);
+}
+
+.video-reel video {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    object-fit: cover;
 }
