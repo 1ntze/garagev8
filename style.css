@@ -172,6 +172,98 @@ nav a.active {
 nav a.active::after {
     width: 100%;
 }
+
+/* =================================
+   DROPDOWN SERVIÇOS - DESKTOP
+================================= */
+
+nav ul li.servicos-dropdown {
+    position: relative;
+}
+
+/* Botão Serviços */
+nav ul li.servicos-dropdown > .servicos-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+}
+
+/* Seta */
+nav ul li.servicos-dropdown > .servicos-toggle i {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+/* Submenu */
+nav ul li.servicos-dropdown > .servicos-submenu {
+    position: absolute;
+
+    top: 100%;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 230px;
+
+    margin-top: 15px;
+    padding: 8px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    background: #111;
+    border: 1px solid rgba(239, 35, 60, 0.4);
+    border-radius: 12px;
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: 0.25s ease;
+
+    z-index: 9999;
+}
+
+/* ABRIR NO CLIQUE */
+nav ul li.servicos-dropdown.aberto > .servicos-submenu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Girar seta */
+nav ul li.servicos-dropdown.aberto > .servicos-toggle i {
+    transform: rotate(180deg);
+}
+
+/* Links */
+nav ul li.servicos-dropdown > .servicos-submenu li {
+    width: 100%;
+}
+
+nav ul li.servicos-dropdown > .servicos-submenu li a {
+    display: block;
+
+    width: 100%;
+    padding: 12px 14px;
+
+    color: #fff;
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    transition: 0.2s ease;
+}
+
+nav ul li.servicos-dropdown > .servicos-submenu li a:hover {
+    color: #ef233c;
+    background: rgba(239, 35, 60, 0.1);
+    padding-left: 19px;
+}
 /* ==========================
    MENU MOBILE
 ========================== */
@@ -188,7 +280,16 @@ nav a.active::after {
     color: var(--primary);
 }
 
+
+/* ==========================
+   RESPONSIVO
+========================== */
+
 @media (max-width: 900px) {
+
+    /* ==========================
+       HEADER
+    ========================== */
 
     header .container {
         height: 75px;
@@ -198,131 +299,327 @@ nav a.active::after {
         font-size: 1.6rem;
     }
 
+
+    /* ==========================
+       MENU NORMAL
+    ========================== */
+
     nav {
         display: none;
     }
+
+
+    /* ==========================
+       BOTÃO HAMBÚRGUER
+    ========================== */
 
     .menu-mobile {
         display: block;
         z-index: 1001;
     }
 
+
+    /* ==========================
+       LOGIN
+    ========================== */
+
     .btn-login {
         display: none;
     }
 
-    /* MENU ABERTO */
+
+    /* ==========================
+       MENU ABERTO
+    ========================== */
 
     nav.active {
+
         display: block;
+
         position: absolute;
+
         top: 75px;
+
         left: 5%;
         right: 5%;
+
         width: auto;
 
         padding: 15px 20px;
 
         background: #111;
+
         border: 1px solid #222;
-        border-radius: 12px;
 
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
-    }
-
-    nav.active ul {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-    }
-
-    nav.active li {
-        width: 100%;
-    }
-
-    nav.active a {
-        display: block;
-        width: 100%;
-
-        padding: 13px 5px;
-
-        color: #ddd;
-        font-size: 0.95rem;
-
-        border-bottom: 1px solid #e10600;
-
-        transition: 0.25s ease;
-    }
-
-    nav.active li:last-child a {
-        border-bottom: none;
-    }
-
-    nav.active a:hover {
-        color: #e10600;
-        padding-left: 10px;
-    }
-
-    nav.active {
-        display: block;
-        position: absolute;
-        top: 75px;
-        left: 5%;
-        right: 5%;
-        width: auto;
-
-        padding: 15px 20px;
-
-        background: #111;
-        border: 1px solid #222;
         border-radius: 12px;
 
         box-shadow:
             0 15px 35px rgba(0, 0, 0, 0.45);
+
+        z-index: 1000;
     }
 
-    nav.active ul {
+
+    /* ==========================
+       LISTA PRINCIPAL
+    ========================== */
+
+    nav.active > ul {
+
         display: flex;
+
         flex-direction: column;
+
         align-items: stretch;
+
         gap: 0;
+
+        width: 100%;
+
+        list-style: none;
+
+        margin: 0;
+
+        padding: 0;
     }
 
-    nav.active li {
+
+    /* ==========================
+       ITENS DO MENU
+    ========================== */
+
+    nav.active > ul > li {
+
         width: 100%;
     }
 
-    nav.active a {
+    .servicos h2 i {
+    color: var(--primary);
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+    /* ==========================
+       LINKS PRINCIPAIS
+    ========================== */
+
+    nav.active > ul > li > a {
+
         display: block;
+
         width: 100%;
 
         padding: 13px 5px;
 
         color: #ddd;
+
         font-size: 0.95rem;
+
+        text-decoration: none;
 
         border-bottom: 1px solid #222;
 
         transition: 0.25s ease;
     }
 
-    nav.active li:last-child a {
-        border-bottom: none;
-    }
 
-    nav.active a:hover {
+    /* ==========================
+       HOVER LINKS
+    ========================== */
+
+    nav.active > ul > li > a:hover {
+
         color: var(--primary);
+
         padding-left: 10px;
     }
 
-    nav.active a::after {
-        display: none;
-    
-    }
-    
-}
 
+    /* ==========================
+       ÚLTIMO ITEM
+    ========================== */
+
+    nav.active > ul > li:last-child > a {
+
+        border-bottom: none;
+    }
+
+
+    /* =================================
+       SERVIÇOS
+    ================================= */
+
+    nav.active li.servicos-dropdown {
+
+        width: 100%;
+    }
+
+
+    /* ==========================
+       BOTÃO SERVIÇOS
+    ========================== */
+
+    nav.active li.servicos-dropdown > .servicos-toggle {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-start;
+
+        width: 100%;
+
+        padding: 13px 5px;
+
+        color: #ddd;
+
+        font-size: 0.95rem;
+
+        text-decoration: none;
+
+        border-bottom: 1px solid #222;
+
+        cursor: default;
+    }
+
+
+    /* ==========================
+       ESCONDE A SETA
+    ========================== */
+
+    nav.active li.servicos-dropdown
+    > .servicos-toggle i {
+
+        display: none;
+    }
+
+
+    /* =================================
+       SUBMENU SERVIÇOS
+       APARECE AUTOMATICAMENTE
+    ================================= */
+
+    nav.active li.servicos-dropdown
+    > .servicos-submenu {
+
+        position: static;
+
+        display: flex;
+
+        flex-direction: column;
+
+        width: 100%;
+
+        margin: 0;
+
+        padding: 0;
+
+        gap: 0;
+
+        background: transparent;
+
+        border: none;
+
+        border-radius: 0;
+
+        box-shadow: none;
+
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+
+        transform: none;
+
+        list-style: none;
+    }
+
+
+    /* ==========================
+       ITENS DO SUBMENU
+    ========================== */
+
+    nav.active li.servicos-dropdown
+    > .servicos-submenu li {
+
+        width: 100%;
+
+        margin: 0;
+
+        padding: 0;
+    }
+
+
+    /* ==========================
+       LINKS DO SUBMENU
+    ========================== */
+
+    nav.active li.servicos-dropdown
+    > .servicos-submenu li a {
+
+        display: block;
+
+        width: 100%;
+
+        padding: 11px 5px 11px 20px;
+
+        color: #aaa;
+
+        font-size: 0.85rem;
+
+        font-weight: 400;
+
+        line-height: 1.2;
+
+        text-decoration: none;
+
+        background: transparent;
+
+        border-bottom: 1px solid #222;
+
+        border-radius: 0;
+
+        transition: 0.25s ease;
+    }
+
+
+    /* ==========================
+       HOVER SUBMENU
+    ========================== */
+
+    nav.active li.servicos-dropdown
+    > .servicos-submenu li a:hover {
+
+        color: var(--primary);
+
+        padding-left: 27px;
+
+        background: rgba(225, 6, 0, 0.05);
+    }
+
+
+    /* ==========================
+       REMOVE EFEITOS ANTIGOS
+    ========================== */
+
+    nav.active li.servicos-dropdown
+    > .servicos-submenu li a::after {
+
+        display: none;
+    }
+
+
+    /* ==========================
+       GALERIA / CONTATO
+    ========================== */
+
+    nav.active > ul > li > a::after {
+
+        display: none;
+    }
+
+}
 /* ===========================
    BOTÃO ADMINISTRADOR
 =========================== */
@@ -3222,3 +3519,4 @@ footer p {
 
     object-fit: cover;
 }
+

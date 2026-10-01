@@ -52,3 +52,21 @@ setInterval(trocarSlide, 5000);
             nav.classList.remove('active');
         });
     });
+
+
+
+const servicosToggle = document.querySelector(".servicos-toggle");
+const servicosDropdown = document.querySelector(".servicos-dropdown");
+
+if (servicosToggle && servicosDropdown) {
+
+    servicosToggle.addEventListener("click", function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        servicosDropdown.classList.toggle("aberto");
+
+    });
+
+}
