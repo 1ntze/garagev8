@@ -1082,9 +1082,7 @@ font-size:1.5rem;
 }
 
 
-/* ==========================
-   CTA
-========================== */
+
 
 /* ==========================
    CTA
@@ -2358,7 +2356,6 @@ footer p {
    PÁGINA — ESTÉTICA AUTOMOTIVA
 ========================================================= */
 
-
 /* =========================
    HERO
 ========================= */
@@ -2370,19 +2367,54 @@ footer p {
     align-items: center;
     overflow: hidden;
 
+    background: #050505;
+}
+
+.servico-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+/* FOTO DO LADO DIREITO */
+.servico-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    width: 50%;
+    height: 100%;
+
     background:
         linear-gradient(
             90deg,
-            rgba(0, 0, 0, 0.92) 0%,
-            rgba(0, 0, 0, 0.70) 50%,
-            rgba(0, 0, 0, 0.45) 100%
+            #050505 0%,
+            rgba(5, 5, 5, 0.65) 15%,
+            rgba(5, 5, 5, 0.05) 55%,
+            rgba(5, 5, 5, 0) 100%
         ),
-        url("img/index/BMW.mp4");
+        url("img/estetica/dodge.png");
 
     background-size: cover;
     background-position: center;
+
+    z-index: 0;
 }
 
+/* CONTEÚDO FICA NA FRENTE */
+.servico-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* NÃO MOSTRA A FOTO NO CELULAR */
+@media (max-width: 768px) {
+    .servico-hero::after {
+        display: none;
+    }
+}
+
+/* OVERLAY */
 .servico-hero-overlay {
     position: absolute;
     inset: 0;
@@ -2395,8 +2427,11 @@ footer p {
         );
 
     pointer-events: none;
+    z-index: 1;
 }
 
+
+/* CONTEÚDO */
 .servico-hero-content {
     position: relative;
     z-index: 2;
@@ -2444,6 +2479,13 @@ footer p {
 
     font-size: 1.05rem;
     line-height: 1.8;
+}
+
+/* ESCONDE A FOTO NO CELULAR */
+@media (max-width: 768px) {
+    .servico-hero::after {
+        display: none;
+    }
 }
 
 
@@ -2717,6 +2759,8 @@ footer p {
 }
 
 
+
+
 /* =========================
    CTA
 ========================= */
@@ -2734,14 +2778,22 @@ footer p {
 
     background:
         linear-gradient(
-            rgba(0, 0, 0, 0.78),
-            rgba(0, 0, 0, 0.88)
+            90deg,
+            rgba(0, 0, 0, 0.95) 0%,
+            rgba(0, 0, 0, 0.78) 25%,
+            rgba(0, 0, 0, 0.45) 55%,
+            rgba(0, 0, 0, 0.80) 100%
         ),
-        url("img/carro1.jpg");
+        url("img/index/bannercamaro.png");
 
     background-size: cover;
     background-position: center;
 }
+
+
+/* =========================
+   OVERLAY VERMELHO
+========================= */
 
 .servico-cta-overlay {
     position: absolute;
@@ -2753,7 +2805,14 @@ footer p {
             rgba(217, 4, 41, 0.15),
             transparent 60%
         );
+
+    z-index: 1;
 }
+
+
+/* =========================
+   CONTEÚDO
+========================= */
 
 .servico-cta-content {
     position: relative;
@@ -2764,6 +2823,11 @@ footer p {
     text-align: center;
 }
 
+
+/* =========================
+   TEXTO PEQUENO
+========================= */
+
 .servico-cta-content > span {
     color: #d90429;
 
@@ -2772,6 +2836,11 @@ footer p {
 
     letter-spacing: 3px;
 }
+
+
+/* =========================
+   TÍTULO
+========================= */
 
 .servico-cta-content h2 {
     margin: 18px 0;
@@ -2782,9 +2851,19 @@ footer p {
     line-height: 1.1;
 }
 
+
+/* =========================
+   DESTAQUE
+========================= */
+
 .servico-cta-content h2 strong {
     color: #d90429;
 }
+
+
+/* =========================
+   PARÁGRAFO
+========================= */
 
 .servico-cta-content p {
     max-width: 600px;
@@ -2795,7 +2874,6 @@ footer p {
 
     line-height: 1.7;
 }
-
 
 /* =========================
    RESPONSIVIDADE
@@ -3516,7 +3594,6 @@ footer p {
     width: 100%;
     height: 100%;
     display: block;
-
     object-fit: cover;
 }
 
