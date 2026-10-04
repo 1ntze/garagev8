@@ -2400,6 +2400,21 @@ footer p {
 
     z-index: 0;
 }
+/* HERO - VITRIFICAÇÃO */
+.servico-hero.vitrificacao::after {
+    background:
+        linear-gradient(
+            90deg,
+            #050505 0%,
+            rgba(5, 5, 5, 0.65) 15%,
+            rgba(5, 5, 5, 0.05) 55%,
+            rgba(5, 5, 5, 0) 100%
+        ),
+        url("img/vitrificacao/Dodge-Challenger-PNG-Image-Transparent.png");
+
+    background-size: cover;
+    background-position: center;
+}
 
 /* CONTEÚDO FICA NA FRENTE */
 .servico-hero > * {

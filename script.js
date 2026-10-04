@@ -36,10 +36,6 @@ function trocarSlide(){
 }
 
 setInterval(trocarSlide, 5000);
-
-
-
-  
     const menuMobile = document.querySelector('.menu-mobile');
     const nav = document.querySelector('nav');
 
