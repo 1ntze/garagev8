@@ -2416,6 +2416,499 @@ footer p {
     background-position: center;
 }
 
+
+/* HERO - HIGIENIZAÇÃO */
+.servico-hero.higienizacao::after {
+    background:
+        linear-gradient(
+            90deg,
+            #050505 0%,
+            rgba(5, 5, 5, 0.65) 15%,
+            rgba(5, 5, 5, 0.05) 55%,
+            rgba(5, 5, 5, 0) 100%
+        ),
+        url("img/vitrificacao/ferrari.png");
+
+    background-size: cover;
+    background-position: center;
+}
+
+
+/* ==============================
+   TABELA DE PREÇOS - GARAGE V8
+============================== */
+
+.precos-section {
+    background: #101010;
+    padding: 100px 7%;
+    color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+}
+
+.precos-container {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+.precos-header {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 55px;
+}
+
+.precos-tag {
+    display: inline-block;
+    color: #ef233c;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+}
+
+.precos-header h2 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    margin: 0 0 18px;
+}
+
+.precos-header h2 span {
+    color: #ef233c;
+}
+
+.precos-header p {
+    color: #aaa;
+    font-size: 15px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.precos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    align-items: stretch;
+}
+
+.preco-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 26px;
+    background: linear-gradient(145deg, #1b1b1b, #141414);
+    border: 1px solid #303030;
+    border-radius: 16px;
+    overflow: hidden;
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        background 0.3s ease;
+}
+
+.preco-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 25px;
+    right: 25px;
+    height: 2px;
+    background: #ef233c;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.preco-card:hover {
+    transform: translateY(-7px);
+    border-color: #ef233c;
+    background: linear-gradient(145deg, #202020, #151515);
+}
+
+.preco-card:hover::before {
+    transform: scaleX(1);
+}
+
+.preco-icon {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 35, 60, 0.12);
+    border: 1px solid rgba(239, 35, 60, 0.25);
+    border-radius: 12px;
+    color: #ef233c;
+    font-size: 22px;
+    margin-bottom: 24px;
+}
+
+.preco-card h3 {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin: 0 0 12px;
+}
+
+.preco-descricao {
+    color: #999;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0 0 25px;
+    min-height: 47px;
+}
+
+.preco-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    border-top: 1px solid #303030;
+}
+
+.preco-item span {
+    color: #c5c5c5;
+    font-size: 13px;
+}
+
+.preco-item strong,
+.preco-unico strong {
+    color: #ef233c;
+    font-size: 21px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.preco-unico {
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.preco-destaque {
+    border-color: rgba(239, 35, 60, 0.6);
+    background: linear-gradient(145deg, #261719, #171414);
+}
+
+.preco-selo {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    background: #ef233c;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.precos-footer {
+    text-align: center;
+    margin-top: 55px;
+}
+
+.precos-footer p {
+    color: #aaa;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.precos-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 26px;
+    border-radius: 8px;
+    background: #ef233c;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.precos-whatsapp:hover {
+    background: #c8102e;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+/* TABLETS */
+@media (max-width: 950px) {
+    .precos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .precos-section {
+        padding: 80px 5%;
+    }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+    .precos-section {
+        padding: 65px 20px;
+    }
+
+    .precos-header {
+        margin-bottom: 35px;
+    }
+
+    .precos-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .preco-card {
+        padding: 26px 22px;
+    }
+
+    .preco-descricao {
+        min-height: auto;
+    }
+
+    .precos-footer {
+        margin-top: 35px;
+    }
+
+    .precos-whatsapp {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* PREÇOS DA HIGIENIZAÇÃO */
+
+.higienizacao-precos-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px;
+    max-width: 900px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+.higienizacao-precos-grid .preco-card {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.higienizacao-precos-grid .preco-descricao {
+    min-height: 0;
+}
+
+.higienizacao-precos-grid .preco-unico {
+    margin-top: auto;
+}
+
+/* CELULAR */
+@media (max-width: 600px) {
+    .higienizacao-precos-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
+
+
+
+/* =================================
+   PREÇOS - VITRIFICAÇÃO GARAGE V8
+================================= */
+
+.vitrificacao-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    max-width: 1250px;
+    margin: 0 auto;
+    align-items: stretch;
+}
+
+.vitrificacao-grid .vitrificacao-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 100%;
+    box-sizing: border-box;
+
+    padding: 30px 25px;
+    border-radius: 16px;
+}
+
+/* ÍCONES */
+.vitrificacao-card .preco-icon,
+.vitrificacao-card .preco-icone {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    margin-bottom: 20px;
+
+    color: #ef233c;
+    font-size: 22px;
+
+    background: rgba(239, 35, 60, 0.12);
+    border: 1px solid rgba(239, 35, 60, 0.25);
+    border-radius: 12px;
+}
+
+/* ETIQUETAS */
+.vitrificacao-tag,
+.preco-tag {
+    display: inline-block;
+    color: #ef233c;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+}
+
+/* TÍTULOS */
+.vitrificacao-card h3 {
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 0 0 15px;
+}
+
+/* DESCRIÇÕES */
+.vitrificacao-card .preco-descricao {
+    color: #aaa;
+    font-size: 13px;
+    line-height: 1.8;
+    min-height: 0;
+    margin-bottom: 20px;
+}
+
+/* DURAÇÃO DA PROTEÇÃO */
+.vitrificacao-duracao {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    margin-bottom: 15px;
+    border-top: 1px solid #303030;
+    border-bottom: 1px solid #303030;
+}
+
+.vitrificacao-duracao strong {
+    color: #ef233c;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.vitrificacao-duracao span {
+    color: #ccc;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* DETALHES */
+.vitrificacao-detalhe {
+    color: #ef233c;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+/* PREÇOS */
+.vitrificacao-card .preco-unico {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.vitrificacao-card .preco-unico strong {
+    color: #ef233c;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+/* OPÇÕES DE COURO E PLÁSTICOS */
+.vitrificacao-opcao {
+    padding: 15px 0;
+    border-top: 1px solid #303030;
+}
+
+.vitrificacao-opcao h4 {
+    color: #fff;
+    font-size: 14px;
+    margin: 0 0 6px;
+}
+
+.vitrificacao-opcao p {
+    color: #999;
+    font-size: 12px;
+    margin: 0 0 8px;
+}
+
+.vitrificacao-opcao strong {
+    color: #ef233c;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+/* CARDS EM DESTAQUE */
+.vitrificacao-destaque {
+    border-color: rgba(239, 35, 60, 0.6);
+}
+
+.vitrificacao-premium {
+    border-color: rgba(239, 35, 60, 0.4);
+}
+
+/* CENTRALIZA O ÚLTIMO CARD QUANDO NECESSÁRIO */
+@media (min-width: 951px) {
+    .vitrificacao-grid > .vitrificacao-card:last-child:nth-child(3n + 1) {
+        grid-column: 2;
+    }
+}
+
+/* TABLETS */
+@media (max-width: 950px) {
+    .vitrificacao-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .vitrificacao-grid > .vitrificacao-card:last-child:nth-child(2n + 1) {
+        grid-column: 1 / -1;
+        width: calc(50% - 10px);
+        justify-self: center;
+    }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+    .vitrificacao-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .vitrificacao-grid > .vitrificacao-card,
+    .vitrificacao-grid > .vitrificacao-card:last-child:nth-child(2n + 1) {
+        grid-column: 1;
+        width: 100%;
+    }
+
+    .vitrificacao-grid .vitrificacao-card {
+        padding: 25px 22px;
+    }
+}
+
+
+
 /* CONTEÚDO FICA NA FRENTE */
 .servico-hero > * {
     position: relative;
