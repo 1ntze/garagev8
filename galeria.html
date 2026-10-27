@@ -1,0 +1,980 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Galeria | Garage V8</title>
+    <meta name="description" content="Conheça os trabalhos da Garage V8 Taubaté: lavagem, polimento, vitrificação e higienização automotiva.">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="img/logogarage.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        /* GALERIA — ESTILOS RESTRITOS AO CONTEÚDO */
+
+        .galeria-page {
+            background: #0b0b0b;
+            color: #f5f5f5;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .galeria-page *,
+        .galeria-modal * {
+            box-sizing: border-box;
+        }
+
+        .galeria-page .galeria-hero {
+            position: relative;
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+            padding: 80px max(6%, calc((100% - 1200px) / 2));
+            background:
+                linear-gradient(90deg, rgba(0,0,0,.94), rgba(0,0,0,.65) 55%, rgba(0,0,0,.25)),
+                url("img/galeria/capa-galeria.jpg") center 55% / cover no-repeat,
+                #171717;
+        }
+
+        .galeria-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, #0b0b0b 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        .galeria-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+        }
+
+        .galeria-page .galeria-tag {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ef233c;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .galeria-page .galeria-hero h1 {
+            margin: 0 0 22px;
+            color: #fff;
+            font-size: clamp(36px, 5vw, 65px);
+            line-height: 1.12;
+            font-weight: 500;
+            letter-spacing: -1.5px;
+        }
+
+        .galeria-page .galeria-hero h1 strong {
+            color: #ef233c;
+            font-weight: 800;
+        }
+
+        .galeria-page .galeria-hero p {
+            max-width: 540px;
+            margin: 0 0 30px;
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .galeria-page .galeria-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 23px;
+            border: 1px solid #d90429;
+            border-radius: 4px;
+            background: #d90429;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .25s, transform .25s;
+        }
+
+        .galeria-page .galeria-btn:hover {
+            background: #b90322;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .galeria-section {
+            padding: 80px 0 90px;
+            background: #0b0b0b;
+        }
+
+        .galeria-section .container,
+        .galeria-cta .container {
+            width: min(1200px, 90%);
+            margin: 0 auto;
+        }
+
+        .galeria-heading {
+            max-width: 720px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        .galeria-heading .section-tag {
+            color: #ef233c;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .galeria-heading h2 {
+            margin: 15px 0;
+            color: #fff;
+            font-size: clamp(27px, 4vw, 42px);
+            line-height: 1.3;
+            font-weight: 500;
+        }
+
+        .galeria-heading h2 strong {
+            color: #ef233c;
+        }
+
+        .galeria-heading p {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .galeria-filtros {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+
+        .galeria-page .filtro-btn {
+            padding: 10px 18px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            background: #151515;
+            color: #bbb;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .galeria-page .filtro-btn:hover,
+        .galeria-page .filtro-btn.ativo {
+            border-color: #d90429;
+            background: #d90429;
+            color: #fff;
+        }
+
+        .galeria-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            align-items: start;
+        }
+
+        .galeria-card {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid #242424;
+            border-radius: 5px;
+            background: #141414;
+            transition: border-color .25s, transform .25s;
+        }
+
+        .galeria-card:hover {
+            border-color: #444;
+            transform: translateY(-3px);
+        }
+
+        .galeria-card[hidden] {
+            display: none !important;
+        }
+
+        .galeria-page .galeria-foto {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 270px;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+            background: #191919;
+            cursor: zoom-in;
+        }
+
+        .galeria-foto img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .45s;
+        }
+
+        .galeria-card:hover .galeria-foto img {
+            transform: scale(1.05);
+        }
+
+        .galeria-zoom {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,.35);
+            color: #fff;
+            font-size: 23px;
+            opacity: 0;
+            transition: opacity .25s;
+        }
+
+        .galeria-card:hover .galeria-zoom,
+        .galeria-foto:focus-visible .galeria-zoom {
+            opacity: 1;
+        }
+
+        .galeria-legenda {
+            padding: 17px 19px 20px;
+        }
+
+        .galeria-legenda span {
+            color: #ef233c;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .galeria-legenda h3 {
+            margin: 8px 0 0;
+            color: #eee;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .galeria-nota {
+            margin-top: 25px;
+            color: #777;
+            font-size: 11px;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .galeria-nota i {
+            color: #ef233c;
+            margin-right: 5px;
+        }
+
+        .galeria-cta {
+            padding: 70px 0;
+            border-top: 1px solid #222;
+            background:
+                linear-gradient(rgba(0,0,0,.90), rgba(0,0,0,.94)),
+                url("img/galeria/capa-galeria.jpg") center / cover no-repeat,
+                #171717;
+            text-align: center;
+        }
+
+        .galeria-page .galeria-cta h2 {
+            margin: 0 0 15px;
+            color: #fff;
+            font-size: clamp(27px, 4vw, 40px);
+            line-height: 1.3;
+        }
+
+        .galeria-page .galeria-cta p {
+            margin: 0 auto 25px;
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* MODAL */
+
+        .galeria-modal[hidden] {
+            display: none !important;
+        }
+
+        .galeria-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 65px 85px;
+            background: rgba(0,0,0,.96);
+            backdrop-filter: blur(8px);
+        }
+
+        .galeria-modal figure {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .galeria-modal figure img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: calc(100% - 45px);
+            object-fit: contain;
+        }
+
+        .galeria-modal figcaption {
+            min-height: 25px;
+            padding-top: 12px;
+            color: #ddd;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .galeria-modal button {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            padding: 0;
+            border: 1px solid #444;
+            border-radius: 50%;
+            background: #191919;
+            color: #fff;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .galeria-modal button:hover {
+            background: #d90429;
+        }
+
+        .galeria-modal .modal-fechar {
+            top: 20px;
+            right: 24px;
+        }
+
+        .galeria-modal .modal-anterior {
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        .galeria-modal .modal-proximo {
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        body.galeria-modal-aberto {
+            overflow: hidden;
+        }
+
+        .galeria-page button:focus-visible,
+        .galeria-page a:focus-visible,
+        .galeria-modal button:focus-visible {
+            outline: 2px solid #ef233c;
+            outline-offset: 4px;
+        }
+
+        @media (max-width: 900px) {
+            .galeria-page .galeria-hero {
+                min-height: 440px;
+                padding: 70px 6%;
+            }
+
+            .galeria-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .galeria-page .galeria-foto {
+                height: 240px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .galeria-page .galeria-hero {
+                min-height: 420px;
+                padding: 65px 6%;
+                background-position: center;
+            }
+
+            .galeria-page .galeria-hero h1 {
+                font-size: 37px;
+                letter-spacing: -1px;
+            }
+
+            .galeria-page .galeria-hero p {
+                font-size: 13px;
+            }
+
+            .galeria-section {
+                padding: 60px 0;
+            }
+
+            .galeria-section .container,
+            .galeria-cta .container {
+                width: 90%;
+            }
+
+            .galeria-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .galeria-page .galeria-foto {
+                height: auto;
+                aspect-ratio: 4 / 3;
+            }
+
+            .galeria-zoom {
+                opacity: 1;
+                inset: auto 12px 12px auto;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: rgba(0,0,0,.7);
+                font-size: 15px;
+            }
+
+            .galeria-filtros {
+                gap: 8px;
+            }
+
+            .galeria-page .filtro-btn {
+                padding: 9px 12px;
+                font-size: 11px;
+            }
+
+            .galeria-modal {
+                padding: 65px 15px;
+            }
+
+            .galeria-modal .modal-anterior {
+                left: 8px;
+            }
+
+            .galeria-modal .modal-proximo {
+                right: 8px;
+            }
+
+            .galeria-modal button {
+                width: 38px;
+                height: 38px;
+            }
+        }
+
+        
+.galeria-page .galeria-hero {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    padding: 80px max(6%, calc((100% - 1200px) / 2));
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.92) 0%,
+            rgba(0, 0, 0, 0.72) 42%,
+            rgba(0, 0, 0, 0.694) 100%
+        ),
+        url("img/galeria/colagem.png") center center / cover no-repeat,
+        #0b0b0b;
+}
+
+.galeria-page .galeria-hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        0deg,
+        #0b0b0b 0%,
+        transparent 22%,
+        transparent 80%,
+        rgba(0, 0, 0, 0.25) 100%
+    );
+
+    pointer-events: none;
+}
+
+.galeria-page .galeria-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR ORIGINAL — MANTIDA -->
+
+    <header id="header">
+        <div class="container">
+            <a href="inicio.html" class="logo">
+                GARAGE <span>V8</span>
+            </a>
+
+            <nav>
+                <ul>
+                    <li><a href="inicio.html">Início</a></li>
+                    <li><a href="inicio.html#sobre">Sobre</a></li>
+
+                    <li class="servicos-dropdown">
+                        <a href="inicio.html#servicos" class="servicos-toggle">
+                            Serviços
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </a>
+
+                        <ul class="servicos-submenu">
+                            <li><a href="estetica.html">Lavagem Automotiva</a></li>
+                            <li><a href="higienizacao.html">Higienização</a></li>
+                            <li><a href="vitrificacao.html">Vitrificação</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="galeria.html" class="active">Galeria</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+
+            <a href="index.php" class="btn-login">
+                <i class="fa-solid fa-user"></i>
+                Colaborador
+            </a>
+
+            <div class="menu-mobile">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO DA GALERIA -->
+
+    <main class="galeria-page">
+
+        <section class="galeria-hero" id="inicio">
+            <div class="galeria-hero-overlay"></div>
+
+            <div class="galeria-hero-content">
+                <span class="galeria-tag">GARAGE V8 • TAUBATÉ</span>
+
+                <h1>
+                    Nosso trabalho.<br>
+                    <strong>Em cada detalhe.</strong>
+                </h1>
+
+                <p>
+                    Conheça os detalhes dos serviços realizados pela Garage V8.
+                    Cada veículo recebe atenção, cuidado e acabamento profissional.
+                </p>
+
+                <a href="#nossos-trabalhos" class="galeria-btn">
+                    <i class="fa-solid fa-images"></i>
+                    Explorar galeria
+                </a>
+            </div>
+        </section>
+
+        <section class="galeria-section" id="nossos-trabalhos">
+            <div class="container">
+
+                <div class="galeria-heading">
+                    <span class="section-tag">NOSSO PORTFÓLIO</span>
+                    <h2>Resultados que <strong>falam por si.</strong></h2>
+                    <p>Confira alguns dos trabalhos e detalhes da estética automotiva.</p>
+                </div>
+
+                <div class="galeria-filtros" aria-label="Filtrar fotos por serviço">
+                    <button type="button" class="filtro-btn ativo" data-filtro="todos" aria-pressed="true">Todos</button>
+                    <button type="button" class="filtro-btn" data-filtro="lavagem" aria-pressed="false">Lavagem</button>
+                    <button type="button" class="filtro-btn" data-filtro="polimento" aria-pressed="false">Polimento</button>
+                    <button type="button" class="filtro-btn" data-filtro="vitrificacao" aria-pressed="false">Vitrificação</button>
+                    <button type="button" class="filtro-btn" data-filtro="higienizacao" aria-pressed="false">Higienização</button>
+                </div>
+
+                <div class="galeria-grid">
+
+                    <article class="galeria-card" data-categoria="lavagem">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/lavagem-01.jpg" data-descricao="Lavagem automotiva — Limpeza e acabamento" aria-label="Ampliar foto: lavagem automotiva">
+                            <img src="img/galeria/lavagem-01.jpg" alt="Lavagem automotiva" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Lavagem</span>
+                            <h3>Limpeza e acabamento</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="polimento">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/polimento-01.jpg" data-descricao="Polimento automotivo — Brilho renovado" aria-label="Ampliar foto: polimento automotivo">
+                            <img src="img/galeria/polimento-01.jpg" alt="Polimento automotivo" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Polimento</span>
+                            <h3>Brilho renovado</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="vitrificacao">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/vitrificacao-01.jpg" data-descricao="Vitrificação automotiva — Proteção e reflexo" aria-label="Ampliar foto: vitrificação automotiva">
+                            <img src="img/galeria/vitrificacao-01.jpg" alt="Vitrificação automotiva" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Vitrificação</span>
+                            <h3>Proteção e reflexo</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="higienizacao">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/higienizacao-01.jpg" data-descricao="Higienização interna — Cuidado por dentro" aria-label="Ampliar foto: higienização interna">
+                            <img src="img/galeria/higienizacao-01.jpg" alt="Higienização interna" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Higienização</span>
+                            <h3>Cuidado por dentro</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="lavagem">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/lavagem-02.jpg" data-descricao="Detalhamento externo — Detalhes que fazem diferença" aria-label="Ampliar foto: detalhamento externo">
+                            <img src="img/galeria/lavagem-02.jpg" alt="Detalhamento externo" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Lavagem</span>
+                            <h3>Detalhes que fazem diferença</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="polimento">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/polimento-02.jpg" data-descricao="Acabamento de pintura — Acabamento refinado" aria-label="Ampliar foto: acabamento de pintura">
+                            <img src="img/galeria/polimento-02.jpg" alt="Acabamento de pintura" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Polimento</span>
+                            <h3>Acabamento refinado</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="vitrificacao">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/vitrificacao-02.jpg" data-descricao="Proteção da pintura — Brilho e proteção" aria-label="Ampliar foto: proteção da pintura">
+                            <img src="img/galeria/vitrificacao-02.jpg" alt="Proteção da pintura" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Vitrificação</span>
+                            <h3>Brilho e proteção</h3>
+                        </div>
+                    </article>
+
+                    <article class="galeria-card" data-categoria="higienizacao">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/higienizacao-02.jpg" data-descricao="Detalhamento interno — Interior renovado" aria-label="Ampliar foto: detalhamento interno">
+                            <img src="img/galeria/higienizacao-02.jpg" alt="Detalhamento interno" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Higienização</span>
+                            <h3>Interior renovado</h3>
+                        </div>
+                    </article>
+                    <article class="galeria-card" data-categoria="higienizacao">
+                        <button type="button" class="galeria-foto" data-imagem="img/galeria/higienizacao-02.jpg" data-descricao="Detalhamento interno — Interior renovado" aria-label="Ampliar foto: detalhamento interno">
+                            <img src="img/galeria/higienizacao-02.jpg" alt="Detalhamento interno" loading="lazy">
+                            <span class="galeria-zoom"><i class="fa-solid fa-expand"></i></span>
+                        </button>
+                        <div class="galeria-legenda">
+                            <span>Higienização</span>
+                            <h3>Interior renovado</h3>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+      
+
+        <!-- VISUALIZADOR DE FOTOS -->
+
+        <div class="galeria-modal" id="galeriaModal" role="dialog"
+             aria-modal="true" aria-label="Visualização da foto" hidden>
+
+            <button type="button" class="modal-fechar" aria-label="Fechar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <button type="button" class="modal-anterior" aria-label="Foto anterior">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <figure>
+                <img src="" alt="" id="galeriaModalImagem">
+                <figcaption id="galeriaModalLegenda"></figcaption>
+            </figure>
+
+            <button type="button" class="modal-proximo" aria-label="Próxima foto">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER ORIGINAL — MANTIDO -->
+
+    <footer id="contato">
+        <div class="container">
+
+            <div class="footer-brand">
+                <a href="#" class="footer-logo">
+                    <img src="img/logogarage.png" alt="Garage V8">
+                </a>
+
+                <h3>Garage V8</h3>
+                <p>Estética automotiva premium em Taubaté.</p>
+
+                <div class="footer-highlight">
+                    <i class="fa-solid fa-car-side"></i>
+                    <span>A exclusividade que seu carro merece.</span>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contato</h3>
+
+                <div class="contact-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>(12) 99678-7844</span>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>
+                        Rua Espanha, 89<br>
+                        Jardim das Nações<br>
+                        Taubaté - SP
+                    </span>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fa-regular fa-clock"></i>
+                    <span>Atendimento mediante agendamento</span>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>Redes Sociais</h3>
+
+                <p class="social-text">
+                    Acompanhe nossos trabalhos e novidades.
+                </p>
+
+                <div class="social-links">
+                    <a href="https://www.instagram.com/garagev8_taubate/"
+                       aria-label="Instagram" target="_blank">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="https://www.facebook.com/garagev8taubate?locale=pt_BR"
+                       aria-label="Facebook" target="_blank">
+                        <i class="fa-brands fa-facebook"></i>
+                    </a>
+
+                    <a href="https://api.whatsapp.com/send/?phone=5512996787844&text&type=phone_number&app_absent=0&utm_source=ig"
+                       aria-label="WhatsApp" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+    (() => {
+        'use strict';
+
+        const pagina = document.querySelector('.galeria-page');
+        if (!pagina) return;
+
+        const filtros = pagina.querySelectorAll('.filtro-btn');
+        const cards = [...pagina.querySelectorAll('.galeria-card')];
+
+        const modal = document.getElementById('galeriaModal');
+        const imagemModal = document.getElementById('galeriaModalImagem');
+        const legendaModal = document.getElementById('galeriaModalLegenda');
+
+        const botaoFechar = modal.querySelector('.modal-fechar');
+        const botaoAnterior = modal.querySelector('.modal-anterior');
+        const botaoProximo = modal.querySelector('.modal-proximo');
+
+        let fotosVisiveis = [];
+        let indiceAtual = 0;
+        let ultimoFoco = null;
+
+        function atualizarFotosVisiveis() {
+            fotosVisiveis = cards
+                .filter(card => !card.hidden)
+                .map(card => card.querySelector('.galeria-foto'));
+        }
+
+        function filtrar(categoria) {
+            filtros.forEach(botao => {
+                const selecionado = botao.dataset.filtro === categoria;
+                botao.classList.toggle('ativo', selecionado);
+                botao.setAttribute('aria-pressed', String(selecionado));
+            });
+
+            cards.forEach(card => {
+                card.hidden = categoria !== 'todos' &&
+                    card.dataset.categoria !== categoria;
+            });
+
+            atualizarFotosVisiveis();
+        }
+
+        filtros.forEach(botao => {
+            botao.addEventListener('click', () => {
+                filtrar(botao.dataset.filtro);
+            });
+        });
+
+        function mostrarFoto(indice) {
+            if (!fotosVisiveis.length) return;
+
+            indiceAtual = (indice + fotosVisiveis.length) % fotosVisiveis.length;
+
+            const botao = fotosVisiveis[indiceAtual];
+            const imagem = botao.querySelector('img');
+
+            imagemModal.src = botao.dataset.imagem;
+            imagemModal.alt = imagem.alt;
+            legendaModal.textContent = botao.dataset.descricao || imagem.alt;
+
+            botaoAnterior.hidden = fotosVisiveis.length < 2;
+            botaoProximo.hidden = fotosVisiveis.length < 2;
+        }
+
+        function abrirModal(botao) {
+            atualizarFotosVisiveis();
+
+            indiceAtual = fotosVisiveis.indexOf(botao);
+            if (indiceAtual < 0) return;
+
+            ultimoFoco = botao;
+
+            mostrarFoto(indiceAtual);
+            modal.hidden = false;
+            document.body.classList.add('galeria-modal-aberto');
+
+            botaoFechar.focus();
+        }
+
+        function fecharModal() {
+            modal.hidden = true;
+            imagemModal.src = '';
+            document.body.classList.remove('galeria-modal-aberto');
+
+            if (ultimoFoco) ultimoFoco.focus();
+        }
+
+        cards.forEach(card => {
+            const botao = card.querySelector('.galeria-foto');
+
+            botao.addEventListener('click', () => {
+                abrirModal(botao);
+            });
+
+            const imagem = botao.querySelector('img');
+
+            imagem.addEventListener('error', () => {
+                imagem.style.opacity = '0.25';
+                imagem.alt = 'Imagem não encontrada: ' + botao.dataset.imagem;
+            });
+        });
+
+        botaoFechar.addEventListener('click', fecharModal);
+
+        botaoAnterior.addEventListener('click', () => {
+            mostrarFoto(indiceAtual - 1);
+        });
+
+        botaoProximo.addEventListener('click', () => {
+            mostrarFoto(indiceAtual + 1);
+        });
+
+        modal.addEventListener('click', evento => {
+            if (evento.target === modal) fecharModal();
+        });
+
+        document.addEventListener('keydown', evento => {
+            if (modal.hidden) return;
+
+            if (evento.key === 'Escape') {
+                fecharModal();
+            } else if (evento.key === 'ArrowLeft') {
+                evento.preventDefault();
+                mostrarFoto(indiceAtual - 1);
+            } else if (evento.key === 'ArrowRight') {
+                evento.preventDefault();
+                mostrarFoto(indiceAtual + 1);
+            } else if (evento.key === 'Tab') {
+                const controles = [
+                    botaoFechar,
+                    ...(fotosVisiveis.length > 1
+                        ? [botaoAnterior, botaoProximo]
+                        : [])
+                ].filter(botao => !botao.hidden);
+
+                const primeiro = controles[0];
+                const ultimo = controles[controles.length - 1];
+
+                if (evento.shiftKey && document.activeElement === primeiro) {
+                    evento.preventDefault();
+                    ultimo.focus();
+                } else if (!evento.shiftKey &&
+                           document.activeElement === ultimo) {
+                    evento.preventDefault();
+                    primeiro.focus();
+                }
+            }
+        });
+
+        filtrar('todos');
+    })();
+    </script>
+
+    <!-- SCRIPT ORIGINAL DO SITE -->
+    <script src="script.js"></script>
+
+</body>
+</html>
