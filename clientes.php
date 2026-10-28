@@ -7,20 +7,60 @@ require_once __DIR__ . '/config/conexao.php';
 
 $erro = '';
 $sucesso = '';
+$clienteEdicao = null;
 
+// Salvar novo cliente ou atualizar um cliente existente.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $acao = $_POST['acao'] ?? 'cadastrar';
+    $idCliente = filter_input(INPUT_POST, 'id_cliente', FILTER_VALIDATE_INT);
     $nome = trim($_POST['nome'] ?? '');
     $telefone = trim($_POST['telefone'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $observacoes = trim($_POST['observacoes'] ?? '');
+    $cep = preg_replace('/\D/', '', $_POST['cep'] ?? '');
+    $logradouro = trim($_POST['logradouro'] ?? '');
+    $numero = trim($_POST['numero'] ?? '');
+    $complemento = trim($_POST['complemento'] ?? '');
+    $bairro = trim($_POST['bairro'] ?? '');
+    $cidade = trim($_POST['cidade'] ?? '');
+    $estado = strtoupper(trim($_POST['estado'] ?? ''));
 
     if ($nome === '') {
         $erro = 'Informe o nome do cliente.';
+    } elseif ($acao === 'editar' && !$idCliente) {
+        $erro = 'Não foi possível identificar o cliente que será atualizado.';
     } else {
         try {
+            if ($acao === 'editar') {
+                $sql = "UPDATE clientes SET
+                            nome = ?, telefone = ?, email = ?, observacoes = ?,
+                            cep = ?, logradouro = ?, numero = ?, complemento = ?,
+                            bairro = ?, cidade = ?, estado = ?
+                        WHERE id_cliente = ?";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    $nome,
+                    $telefone !== '' ? $telefone : null,
+                    $email !== '' ? $email : null,
+                    $observacoes !== '' ? $observacoes : null,
+                    $cep !== '' ? $cep : null,
+                    $logradouro !== '' ? $logradouro : null,
+                    $numero !== '' ? $numero : null,
+                    $complemento !== '' ? $complemento : null,
+                    $bairro !== '' ? $bairro : null,
+                    $cidade !== '' ? $cidade : null,
+                    $estado !== '' ? $estado : null,
+                    $idCliente
+                ]);
+
+                header('Location: clientes.php?atualizado=1');
+                exit;
+            }
+
             $sql = "INSERT INTO clientes
-                    (nome, telefone, email, observacoes, cadastrado_por)
-                    VALUES (?, ?, ?, ?, ?)";
+                    (nome, telefone, email, observacoes, cep, logradouro, numero,
+                     complemento, bairro, cidade, estado, cadastrado_por)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute([
@@ -28,20 +68,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $telefone !== '' ? $telefone : null,
                 $email !== '' ? $email : null,
                 $observacoes !== '' ? $observacoes : null,
-                1
+                $cep !== '' ? $cep : null,
+                $logradouro !== '' ? $logradouro : null,
+                $numero !== '' ? $numero : null,
+                $complemento !== '' ? $complemento : null,
+                $bairro !== '' ? $bairro : null,
+                $cidade !== '' ? $cidade : null,
+                $estado !== '' ? $estado : null,
+                (int) ($_SESSION['id_usuario'] ?? 0)
             ]);
 
             header('Location: clientes.php?sucesso=1');
             exit;
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            $erro = 'Não foi possível cadastrar o cliente.';
+            $erro = $acao === 'editar'
+                ? 'Não foi possível atualizar os dados do cliente.'
+                : 'Não foi possível cadastrar o cliente.';
+            if ($acao === 'editar' && $idCliente) {
+                $stmtEdicao = $pdo->prepare('SELECT * FROM clientes WHERE id_cliente = ?');
+                $stmtEdicao->execute([$idCliente]);
+                $clienteEdicao = $stmtEdicao->fetch() ?: null;
+            }
         }
     }
 }
 
+// Mantém os dados digitados no formulário caso a validação encontre um erro.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($acao ?? '') === 'editar' && $erro !== '' && $idCliente) {
+    $clienteEdicao = array_merge($_POST, ['id_cliente' => $idCliente]);
+}
+
 if (isset($_GET['sucesso'])) {
     $sucesso = 'Cliente cadastrado com sucesso!';
+} elseif (isset($_GET['atualizado'])) {
+    $sucesso = 'Dados do cliente atualizados com sucesso!';
+}
+
+// Quando o usuário clica em Editar, carregamos os dados no formulário.
+if ($clienteEdicao === null && isset($_GET['editar'])) {
+    $idEdicao = filter_input(INPUT_GET, 'editar', FILTER_VALIDATE_INT);
+    if ($idEdicao) {
+        $stmtEdicao = $pdo->prepare('SELECT * FROM clientes WHERE id_cliente = ?');
+        $stmtEdicao->execute([$idEdicao]);
+        $clienteEdicao = $stmtEdicao->fetch() ?: null;
+        if (!$clienteEdicao) {
+            $erro = 'O cliente selecionado não foi encontrado.';
+        }
+    } else {
+        $erro = 'Identificador de cliente inválido.';
+    }
 }
 
 $busca = trim($_GET['busca'] ?? '');
@@ -520,7 +596,7 @@ function e($valor)
 
         table {
             width: 100%;
-            min-width: 650px;
+            min-width: 760px;
             border-collapse: collapse;
             text-align: left;
         }
@@ -852,16 +928,20 @@ function e($valor)
 
             <div class="section-heading">
                 <div class="section-icon">
-                    <i class="fa-solid fa-user-plus"></i>
+                    <i class="fa-solid <?= $clienteEdicao ? 'fa-user-pen' : 'fa-user-plus' ?>"></i>
                 </div>
 
                 <div>
-                    <h2>Novo cliente</h2>
-                    <p>Preencha os dados para registrar um cliente.</p>
+                    <h2><?= $clienteEdicao ? 'Editar cliente #' . (int) $clienteEdicao['id_cliente'] : 'Novo cliente' ?></h2>
+                    <p><?= $clienteEdicao ? 'Altere os dados e salve as modificações.' : 'Preencha os dados para registrar um cliente.' ?></p>
                 </div>
             </div>
 
             <form method="post">
+                <input type="hidden" name="acao" value="<?= $clienteEdicao ? 'editar' : 'cadastrar' ?>">
+                <?php if ($clienteEdicao): ?>
+                    <input type="hidden" name="id_cliente" value="<?= (int) $clienteEdicao['id_cliente'] ?>">
+                <?php endif; ?>
                 <div class="form-grid">
 
                     <label class="field full">
@@ -870,6 +950,7 @@ function e($valor)
                             type="text"
                             name="nome"
                             maxlength="100"
+                            value="<?= e($clienteEdicao['nome'] ?? '') ?>"
                             placeholder="Digite o nome completo"
                             required
                         >
@@ -881,6 +962,7 @@ function e($valor)
                             type="tel"
                             name="telefone"
                             maxlength="20"
+                            value="<?= e($clienteEdicao['telefone'] ?? '') ?>"
                             placeholder="(00) 00000-0000"
                         >
                     </label>
@@ -891,8 +973,54 @@ function e($valor)
                             type="email"
                             name="email"
                             maxlength="200"
+                            value="<?= e($clienteEdicao['email'] ?? '') ?>"
                             placeholder="cliente@email.com"
                         >
+                    </label>
+
+                    <div class="field">
+                        <label for="cep">CEP</label>
+                        <input
+                            type="text"
+                            id="cep"
+                            name="cep"
+                            value="<?= e($clienteEdicao['cep'] ?? '') ?>"
+                            inputmode="numeric"
+                            maxlength="9"
+                            placeholder="00000-000"
+                            autocomplete="postal-code"
+                        >
+                        <small id="cep-status" style="color:var(--muted);font-size:10px;" aria-live="polite">Digite o CEP para buscar o endereço.</small>
+                    </div>
+
+                    <label class="field">
+                        Logradouro
+                        <input type="text" id="logradouro" name="logradouro" value="<?= e($clienteEdicao['logradouro'] ?? '') ?>" maxlength="150" placeholder="Rua, avenida..." autocomplete="address-line1">
+                    </label>
+
+                    <label class="field">
+                        Número
+                        <input type="text" id="numero" name="numero" value="<?= e($clienteEdicao['numero'] ?? '') ?>" maxlength="20" placeholder="Número do imóvel" autocomplete="address-line2">
+                    </label>
+
+                    <label class="field">
+                        Complemento
+                        <input type="text" id="complemento" name="complemento" value="<?= e($clienteEdicao['complemento'] ?? '') ?>" maxlength="100" placeholder="Casa, bloco, apartamento...">
+                    </label>
+
+                    <label class="field">
+                        Bairro
+                        <input type="text" id="bairro" name="bairro" value="<?= e($clienteEdicao['bairro'] ?? '') ?>" maxlength="100" placeholder="Bairro">
+                    </label>
+
+                    <label class="field">
+                        Cidade
+                        <input type="text" id="cidade" name="cidade" value="<?= e($clienteEdicao['cidade'] ?? '') ?>" maxlength="100" placeholder="Cidade" autocomplete="address-level2">
+                    </label>
+
+                    <label class="field">
+                        Estado (UF)
+                        <input type="text" id="estado" name="estado" value="<?= e($clienteEdicao['estado'] ?? '') ?>" maxlength="2" placeholder="SP" autocomplete="address-level1">
                     </label>
 
                     <label class="field full">
@@ -900,14 +1028,17 @@ function e($valor)
                         <textarea
                             name="observacoes"
                             placeholder="Informações adicionais sobre o cliente..."
-                        ></textarea>
+                        ><?= e($clienteEdicao['observacoes'] ?? '') ?></textarea>
                     </label>
 
                     <div class="full form-actions">
                         <button class="btn" type="submit">
-                            <i class="fa-solid fa-plus"></i>
-                            Cadastrar cliente
+                            <i class="fa-solid <?= $clienteEdicao ? 'fa-floppy-disk' : 'fa-plus' ?>"></i>
+                            <?= $clienteEdicao ? 'Salvar alterações' : 'Cadastrar cliente' ?>
                         </button>
+                        <?php if ($clienteEdicao): ?>
+                            <a class="btn" href="clientes.php" style="margin-left:10px;background:#303036;">Cancelar edição</a>
+                        <?php endif; ?>
                     </div>
 
                 </div>
@@ -958,13 +1089,14 @@ function e($valor)
                             <th>Telefone</th>
                             <th>E-mail</th>
                             <th>Data de cadastro</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 
                     <tbody>
                     <?php if (!$clientes): ?>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="empty-state">
                                     <i class="fa-solid fa-users"></i>
                                     <p>Nenhum cliente encontrado.</p>
@@ -992,6 +1124,12 @@ function e($valor)
 
                                 <td>
                                     <?= e($cliente['data_cadastro']) ?>
+                                </td>
+                                <td>
+                                    <a class="btn" href="clientes.php?editar=<?= (int) $cliente['id_cliente'] ?><?= $busca !== '' ? '&busca=' . urlencode($busca) : '' ?>" style="min-height:34px;padding:8px 11px;">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        Editar
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -1023,5 +1161,64 @@ function e($valor)
 
     </main>
 </div>
+
+<script>
+(() => {
+    const campoCep = document.getElementById('cep');
+    const statusCep = document.getElementById('cep-status');
+    const campos = {
+        logradouro: document.getElementById('logradouro'),
+        bairro: document.getElementById('bairro'),
+        cidade: document.getElementById('cidade'),
+        estado: document.getElementById('estado')
+    };
+    let consultaAtual = 0;
+
+    campoCep.addEventListener('input', () => {
+        let valor = campoCep.value.replace(/\D/g, '').slice(0, 8);
+        campoCep.value = valor.length > 5
+            ? valor.slice(0, 5) + '-' + valor.slice(5)
+            : valor;
+    });
+
+    campoCep.addEventListener('blur', async () => {
+        const cep = campoCep.value.replace(/\D/g, '');
+        const idConsulta = ++consultaAtual;
+
+        if (cep.length === 0) {
+            statusCep.textContent = 'Digite o CEP para buscar o endereço.';
+            return;
+        }
+        if (cep.length !== 8) {
+            statusCep.textContent = 'CEP incompleto. Informe os 8 números.';
+            return;
+        }
+
+        statusCep.textContent = 'Consultando CEP...';
+        try {
+            const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
+                headers: { 'Accept': 'application/json' }
+            });
+            if (!resposta.ok) throw new Error('Falha na consulta');
+            const dados = await resposta.json();
+            if (idConsulta !== consultaAtual) return;
+            if (dados.erro) {
+                statusCep.textContent = 'CEP não encontrado. Confira ou preencha o endereço manualmente.';
+                return;
+            }
+
+            campos.logradouro.value = dados.logradouro || '';
+            campos.bairro.value = dados.bairro || '';
+            campos.cidade.value = dados.localidade || '';
+            campos.estado.value = dados.uf || '';
+            statusCep.textContent = 'Endereço preenchido. Confira os dados antes de salvar.';
+        } catch (erro) {
+            if (idConsulta !== consultaAtual) return;
+            statusCep.textContent = 'Não foi possível consultar o ViaCEP. Preencha o endereço manualmente.';
+        }
+    });
+})();
+</script>
+
 </body>
 </html>
