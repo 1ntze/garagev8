@@ -7,14 +7,81 @@ require_once __DIR__ . '/config/conexao.php';
 
 $erro = '';
 $sucesso = '';
+$veiculoEdicao = null;
 
 function e($valor)
 {
     return htmlspecialchars((string) $valor, ENT_QUOTES, 'UTF-8');
 }
 
-// Cadastrar veículo
+// Carrega o veículo selecionado para edição.
+if (isset($_GET['editar'])) {
+    $idEdicao = filter_input(INPUT_GET, 'editar', FILTER_VALIDATE_INT);
+
+    if ($idEdicao) {
+        $stmtEdicao = $pdo->prepare(
+            'SELECT id_veiculo, id_cliente, marca, modelo, ano, placa, cor, observacoes
+             FROM veiculos WHERE id_veiculo = ?'
+        );
+        $stmtEdicao->execute([$idEdicao]);
+        $veiculoEdicao = $stmtEdicao->fetch(PDO::FETCH_ASSOC);
+
+        if (!$veiculoEdicao) {
+            $erro = 'O veículo selecionado não foi encontrado.';
+        }
+    } else {
+        $erro = 'Identificador de veículo inválido.';
+    }
+}
+
+// Cadastrar ou atualizar veículo.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $acao = $_POST['acao'] ?? 'cadastrar';
+
+    // Excluir veículo somente se não houver atendimentos vinculados.
+    if ($acao === 'excluir') {
+        $idExcluir = filter_input(INPUT_POST, 'id_veiculo', FILTER_VALIDATE_INT);
+
+        if (!$idExcluir) {
+            header('Location: veiculos.php?erro_exclusao=identificador');
+            exit;
+        }
+
+        try {
+            $stmtExiste = $pdo->prepare(
+                'SELECT id_veiculo FROM veiculos WHERE id_veiculo = ?'
+            );
+            $stmtExiste->execute([$idExcluir]);
+
+            if (!$stmtExiste->fetch(PDO::FETCH_ASSOC)) {
+                header('Location: veiculos.php?erro_exclusao=nao_encontrado');
+                exit;
+            }
+
+            $stmtAtendimentos = $pdo->prepare(
+                'SELECT COUNT(*) FROM atendimentos WHERE id_veiculo = ?'
+            );
+            $stmtAtendimentos->execute([$idExcluir]);
+
+            if ((int) $stmtAtendimentos->fetchColumn() > 0) {
+                header('Location: veiculos.php?erro_exclusao=vinculado');
+                exit;
+            }
+
+            $stmtExcluir = $pdo->prepare(
+                'DELETE FROM veiculos WHERE id_veiculo = ?'
+            );
+            $stmtExcluir->execute([$idExcluir]);
+
+            header('Location: veiculos.php?excluido=1');
+            exit;
+        } catch (PDOException $ex) {
+            error_log($ex->getMessage());
+            header('Location: veiculos.php?erro_exclusao=relacionamento');
+            exit;
+        }
+    }
+    $idVeiculo = filter_input(INPUT_POST, 'id_veiculo', FILTER_VALIDATE_INT);
     $idCliente = filter_input(INPUT_POST, 'id_cliente', FILTER_VALIDATE_INT);
     $marca = trim($_POST['marca'] ?? '');
     $modelo = trim($_POST['modelo'] ?? '');
@@ -24,12 +91,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $observacoes = trim($_POST['observacoes'] ?? '');
 
     $ano = null;
-
     if ($anoTexto !== '') {
         $ano = filter_var($anoTexto, FILTER_VALIDATE_INT);
     }
 
-    if (!$idCliente || $marca === '' || $modelo === '') {
+    if (!in_array($acao, ['cadastrar', 'editar'], true)) {
+        $erro = 'Ação inválida.';
+    } elseif ($acao === 'editar' && !$idVeiculo) {
+        $erro = 'Identificador de veículo inválido para edição.';
+    } elseif (!$idCliente || $marca === '' || $modelo === '') {
         $erro = 'Selecione um cliente e informe a marca e o modelo.';
     } elseif (
         $anoTexto !== '' &&
@@ -50,33 +120,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erro = 'O cliente selecionado não foi encontrado.';
         } else {
             try {
-                $sql = "INSERT INTO veiculos
-                    (id_cliente, marca, modelo, ano, placa, cor, observacoes)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+                if ($acao === 'editar') {
+                    $verificaVeiculo = $pdo->prepare(
+                        'SELECT id_veiculo FROM veiculos WHERE id_veiculo = ?'
+                    );
+                    $verificaVeiculo->execute([$idVeiculo]);
 
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    $idCliente,
-                    $marca,
-                    $modelo,
-                    $ano ?: null,
-                    $placa !== '' ? $placa : null,
-                    $cor !== '' ? $cor : null,
-                    $observacoes !== '' ? $observacoes : null
-                ]);
+                    if (!$verificaVeiculo->fetch()) {
+                        $erro = 'O veículo que você tentou editar não foi encontrado.';
+                    } else {
+                        $sql = "UPDATE veiculos SET
+                                    id_cliente = ?, marca = ?, modelo = ?, ano = ?,
+                                    placa = ?, cor = ?, observacoes = ?
+                                WHERE id_veiculo = ?";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute([
+                            $idCliente,
+                            $marca,
+                            $modelo,
+                            $anoTexto !== '' ? $ano : null,
+                            $placa !== '' ? $placa : null,
+                            $cor !== '' ? $cor : null,
+                            $observacoes !== '' ? $observacoes : null,
+                            $idVeiculo
+                        ]);
 
-                header('Location: veiculos.php?sucesso=1');
-                exit;
+                        header('Location: veiculos.php?atualizado=1');
+                        exit;
+                    }
+                } else {
+                    $sql = "INSERT INTO veiculos
+                        (id_cliente, marca, modelo, ano, placa, cor, observacoes)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([
+                        $idCliente,
+                        $marca,
+                        $modelo,
+                        $anoTexto !== '' ? $ano : null,
+                        $placa !== '' ? $placa : null,
+                        $cor !== '' ? $cor : null,
+                        $observacoes !== '' ? $observacoes : null
+                    ]);
+
+                    header('Location: veiculos.php?sucesso=1');
+                    exit;
+                }
             } catch (PDOException $ex) {
                 error_log($ex->getMessage());
-                $erro = 'Não foi possível cadastrar o veículo.';
+                $erro = $acao === 'editar'
+                    ? 'Não foi possível atualizar o veículo.'
+                    : 'Não foi possível cadastrar o veículo.';
             }
         }
+    }
+
+    // Mantém os dados digitados caso a validação falhe.
+    if ($acao === 'editar' && $idVeiculo) {
+        $veiculoEdicao = [
+            'id_veiculo' => $idVeiculo,
+            'id_cliente' => $idCliente,
+            'marca' => $marca,
+            'modelo' => $modelo,
+            'ano' => $anoTexto,
+            'placa' => $placa,
+            'cor' => $cor,
+            'observacoes' => $observacoes
+        ];
     }
 }
 
 if (isset($_GET['sucesso'])) {
     $sucesso = 'Veículo cadastrado com sucesso!';
+} elseif (isset($_GET['atualizado'])) {
+    $sucesso = 'Veículo atualizado com sucesso!';
+} elseif (isset($_GET['excluido'])) {
+    $sucesso = 'Veículo excluído com sucesso!';
+}
+
+if (isset($_GET['erro_exclusao'])) {
+    switch ($_GET['erro_exclusao']) {
+        case 'identificador':
+            $erro = 'Identificador de veículo inválido para exclusão.';
+            break;
+        case 'nao_encontrado':
+            $erro = 'O veículo que você tentou excluir não foi encontrado.';
+            break;
+        case 'vinculado':
+            $erro = 'Este veículo não pode ser excluído porque possui atendimentos vinculados. O histórico foi preservado.';
+            break;
+        default:
+            $erro = 'Não foi possível excluir o veículo. Verifique se existem outros registros vinculados.';
+            break;
+    }
 }
 
 // Clientes para o campo de seleção
@@ -809,11 +945,11 @@ $totalVeiculos = count($veiculos);
 
         <section class="card">
             <div class="card-heading">
-                <i class="fa-solid fa-circle-plus"></i>
+                <i class="fa-solid <?= $veiculoEdicao ? 'fa-pen-to-square' : 'fa-circle-plus' ?>"></i>
                 <div>
-                    <h2>Novo veículo</h2>
+                    <h2><?= $veiculoEdicao ? 'Editar veículo #' . (int) $veiculoEdicao['id_veiculo'] : 'Novo veículo' ?></h2>
                     <div class="muted">
-                        Preencha os dados e selecione o proprietário.
+                        <?= $veiculoEdicao ? 'Atualize os dados do veículo e salve as alterações.' : 'Preencha os dados e selecione o proprietário.' ?>
                     </div>
                 </div>
             </div>
@@ -831,6 +967,10 @@ $totalVeiculos = count($veiculos);
             <?php else: ?>
 
                 <form method="post">
+                    <input type="hidden" name="acao" value="<?= $veiculoEdicao ? 'editar' : 'cadastrar' ?>">
+                    <?php if ($veiculoEdicao): ?>
+                        <input type="hidden" name="id_veiculo" value="<?= (int) $veiculoEdicao['id_veiculo'] ?>">
+                    <?php endif; ?>
                     <div class="form-grid">
 
                         <label class="field full">
@@ -841,7 +981,7 @@ $totalVeiculos = count($veiculos);
                                 <?php foreach ($clientes as $cliente): ?>
                                     <option
                                         value="<?= (int) $cliente['id_cliente'] ?>"
-                                        <?= (string) ($_POST['id_cliente'] ?? '') ===
+                                        <?= (string) ($_POST['id_cliente'] ?? ($veiculoEdicao['id_cliente'] ?? '')) ===
                                             (string) $cliente['id_cliente'] ? 'selected' : '' ?>
                                     >
                                         <?= e($cliente['nome']) ?>
@@ -855,7 +995,7 @@ $totalVeiculos = count($veiculos);
                             <input
                                 name="marca"
                                 maxlength="50"
-                                value="<?= e($_POST['marca'] ?? '') ?>"
+                                value="<?= e($_POST['marca'] ?? ($veiculoEdicao['marca'] ?? '')) ?>"
                                 placeholder="Ex.: Chevrolet"
                                 required
                             >
@@ -866,7 +1006,7 @@ $totalVeiculos = count($veiculos);
                             <input
                                 name="modelo"
                                 maxlength="50"
-                                value="<?= e($_POST['modelo'] ?? '') ?>"
+                                value="<?= e($_POST['modelo'] ?? ($veiculoEdicao['modelo'] ?? '')) ?>"
                                 placeholder="Ex.: Onix"
                                 required
                             >
@@ -879,7 +1019,7 @@ $totalVeiculos = count($veiculos);
                                 name="ano"
                                 min="1900"
                                 max="<?= (int) date('Y') + 1 ?>"
-                                value="<?= e($_POST['ano'] ?? '') ?>"
+                                value="<?= e($_POST['ano'] ?? ($veiculoEdicao['ano'] ?? '')) ?>"
                                 placeholder="Ex.: 2022"
                             >
                         </label>
@@ -889,7 +1029,7 @@ $totalVeiculos = count($veiculos);
                             <input
                                 name="placa"
                                 maxlength="10"
-                                value="<?= e($_POST['placa'] ?? '') ?>"
+                                value="<?= e($_POST['placa'] ?? ($veiculoEdicao['placa'] ?? '')) ?>"
                                 placeholder="Ex.: ABC1D23"
                             >
                         </label>
@@ -899,7 +1039,7 @@ $totalVeiculos = count($veiculos);
                             <input
                                 name="cor"
                                 maxlength="30"
-                                value="<?= e($_POST['cor'] ?? '') ?>"
+                                value="<?= e($_POST['cor'] ?? ($veiculoEdicao['cor'] ?? '')) ?>"
                                 placeholder="Ex.: Preto"
                             >
                         </label>
@@ -909,14 +1049,20 @@ $totalVeiculos = count($veiculos);
                             <textarea
                                 name="observacoes"
                                 placeholder="Informações adicionais sobre o veículo..."
-                            ><?= e($_POST['observacoes'] ?? '') ?></textarea>
+                            ><?= e($_POST['observacoes'] ?? ($veiculoEdicao['observacoes'] ?? '')) ?></textarea>
                         </label>
 
                         <div class="full">
                             <button class="btn" type="submit">
                                 <i class="fa-solid fa-floppy-disk"></i>
-                                Cadastrar veículo
+                                <?= $veiculoEdicao ? 'Salvar alterações' : 'Cadastrar veículo' ?>
                             </button>
+                            <?php if ($veiculoEdicao): ?>
+                                <a href="veiculos.php" class="btn" style="margin-left: 8px;">
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Cancelar edição
+                                </a>
+                            <?php endif; ?>
                         </div>
 
                     </div>
@@ -969,13 +1115,14 @@ $totalVeiculos = count($veiculos);
                             <th>Ano</th>
                             <th>Placa</th>
                             <th>Cor</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         <?php if (!$veiculos): ?>
                             <tr>
-                                <td colspan="6" class="empty-state">
+                                <td colspan="7" class="empty-state">
                                     <i class="fa-solid fa-car-side"></i>
                                     Nenhum veículo encontrado.
                                 </td>
@@ -1012,6 +1159,21 @@ $totalVeiculos = count($veiculos);
 
                                     <td>
                                         <?= e($veiculo['cor'] ?? '') ?: '—' ?>
+                                    </td>
+
+                                    <td>
+                                        <a href="veiculos.php?editar=<?= (int) $veiculo['id_veiculo'] ?>" class="btn" style="padding: 8px 10px; white-space: nowrap;">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            Editar
+                                        </a>
+                                        <form method="post" style="display:inline;" onsubmit="return confirm('Tem certeza de que deseja excluir este veículo? Se houver atendimentos vinculados, a exclusão será bloqueada.');">
+                                            <input type="hidden" name="acao" value="excluir">
+                                            <input type="hidden" name="id_veiculo" value="<?= (int) $veiculo['id_veiculo'] ?>">
+                                            <button type="submit" class="btn" style="padding: 8px 10px; white-space: nowrap; margin-top: 5px;">
+                                                <i class="fa-solid fa-trash"></i>
+                                                Excluir
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

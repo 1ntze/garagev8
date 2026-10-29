@@ -9,6 +9,55 @@ $erro = '';
 $sucesso = '';
 $clienteEdicao = null;
 
+// Token de segurança para proteger a ação de exclusão.
+if (empty($_SESSION['csrf_clientes'])) {
+    $_SESSION['csrf_clientes'] = bin2hex(random_bytes(32));
+}
+
+// Excluir cliente somente se não houver registros dependentes.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['acao'] ?? '') === 'excluir') {
+    $idExcluir = filter_input(INPUT_POST, 'id_cliente', FILTER_VALIDATE_INT);
+    $tokenRecebido = $_POST['csrf_token'] ?? '';
+
+    if (!$idExcluir || !hash_equals($_SESSION['csrf_clientes'], $tokenRecebido)) {
+        header('Location: clientes.php?exclusao_erro=solicitacao');
+        exit;
+    }
+
+    try {
+        $stmtCliente = $pdo->prepare('SELECT nome FROM clientes WHERE id_cliente = ?');
+        $stmtCliente->execute([$idExcluir]);
+        $clienteExcluir = $stmtCliente->fetch();
+
+        if (!$clienteExcluir) {
+            header('Location: clientes.php?exclusao_erro=nao_encontrado');
+            exit;
+        }
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM veiculos WHERE id_cliente = ?');
+        $stmt->execute([$idExcluir]);
+        $qtdVeiculos = (int) $stmt->fetchColumn();
+
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM atendimentos WHERE id_cliente = ?');
+        $stmt->execute([$idExcluir]);
+        $qtdAtendimentos = (int) $stmt->fetchColumn();
+
+        if ($qtdVeiculos > 0 || $qtdAtendimentos > 0) {
+            header('Location: clientes.php?exclusao_erro=vinculado');
+            exit;
+        }
+
+        $stmt = $pdo->prepare('DELETE FROM clientes WHERE id_cliente = ?');
+        $stmt->execute([$idExcluir]);
+        header('Location: clientes.php?excluido=1');
+        exit;
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
+        header('Location: clientes.php?exclusao_erro=vinculado');
+        exit;
+    }
+}
+
 // Salvar novo cliente ou atualizar um cliente existente.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? 'cadastrar';
@@ -103,6 +152,21 @@ if (isset($_GET['sucesso'])) {
     $sucesso = 'Cliente cadastrado com sucesso!';
 } elseif (isset($_GET['atualizado'])) {
     $sucesso = 'Dados do cliente atualizados com sucesso!';
+} elseif (isset($_GET['excluido'])) {
+    $sucesso = 'Cliente excluído com sucesso!';
+}
+
+if (isset($_GET['exclusao_erro'])) {
+    switch ($_GET['exclusao_erro']) {
+        case 'vinculado':
+            $erro = 'Este cliente possui veículo ou atendimento vinculado. Remova ou transfira os vínculos antes de tentar excluí-lo.';
+            break;
+        case 'nao_encontrado':
+            $erro = 'O cliente selecionado não foi encontrado.';
+            break;
+        default:
+            $erro = 'Não foi possível validar a solicitação de exclusão. Atualize a página e tente novamente.';
+    }
 }
 
 // Quando o usuário clica em Editar, carregamos os dados no formulário.
@@ -1125,11 +1189,20 @@ function e($valor)
                                 <td>
                                     <?= e($cliente['data_cadastro']) ?>
                                 </td>
-                                <td>
+                                <td style="white-space:nowrap;">
                                     <a class="btn" href="clientes.php?editar=<?= (int) $cliente['id_cliente'] ?><?= $busca !== '' ? '&busca=' . urlencode($busca) : '' ?>" style="min-height:34px;padding:8px 11px;">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                         Editar
                                     </a>
+                                    <form method="post" style="display:inline-block;margin-left:6px;" onsubmit="return confirm('Tem certeza de que deseja excluir o cliente <?= e($cliente['nome']) ?>? Esta ação não poderá ser desfeita.');">
+                                        <input type="hidden" name="acao" value="excluir">
+                                        <input type="hidden" name="id_cliente" value="<?= (int) $cliente['id_cliente'] ?>">
+                                        <input type="hidden" name="csrf_token" value="<?= e($_SESSION['csrf_clientes']) ?>">
+                                        <button class="btn" type="submit" style="min-height:34px;padding:8px 11px;background:#303036;border-color:#73303a;color:#ff8b98;">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Excluir
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -16,7 +16,128 @@ $sucesso = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
 
-    if ($acao === 'cadastrar') {
+    if ($acao === 'alterar_status') {
+        $idAtendimento = filter_input(INPUT_POST, 'id_atendimento', FILTER_VALIDATE_INT);
+        $novoStatus = $_POST['status'] ?? '';
+        $statusValidos = ['Pendente', 'Em andamento', 'Concluído', 'Cancelado'];
+        if (!$idAtendimento || !in_array($novoStatus, $statusValidos, true)) {
+            $erro = 'Atendimento ou status inválido.';
+        } else {
+            try {
+                $stmt = $pdo->prepare('SELECT id_atendimento FROM atendimentos WHERE id_atendimento = ?');
+                $stmt->execute([$idAtendimento]);
+                if (!$stmt->fetch()) throw new DomainException('Atendimento não encontrado.');
+                // Cancelamento seguro: não cancelar automaticamente atendimentos com pagamentos vinculados.
+                if ($novoStatus === 'Cancelado') {
+                    $stmt = $pdo->prepare('SELECT COUNT(*) FROM pagamentos WHERE id_atendimento = ?');
+                    $stmt->execute([$idAtendimento]);
+                    if ((int) $stmt->fetchColumn() > 0) {
+                        throw new DomainException('Este atendimento possui pagamentos vinculados. O cancelamento foi bloqueado para proteger o histórico financeiro. Confira os pagamentos antes de prosseguir.');
+                    }
+                }
+                $stmt = $pdo->prepare('UPDATE atendimentos SET status = ? WHERE id_atendimento = ?');
+                $stmt->execute([$novoStatus, $idAtendimento]);
+                header('Location: atendimentos.php?status_atualizado=1&id=' . $idAtendimento);
+                exit;
+            } catch (Throwable $ex) {
+                if ($ex instanceof DomainException) $erro = $ex->getMessage();
+                else { error_log($ex->getMessage()); $erro = 'Não foi possível atualizar o status.'; }
+            }
+        }
+    } elseif ($acao === 'editar') {
+        $idAtendimento = filter_input(INPUT_POST, 'id_atendimento', FILTER_VALIDATE_INT);
+        $idCliente = filter_input(INPUT_POST, 'id_cliente', FILTER_VALIDATE_INT);
+        $idVeiculo = filter_input(INPUT_POST, 'id_veiculo', FILTER_VALIDATE_INT);
+        $tipo = $_POST['tipo_atendimento'] ?? '';
+        $dataAtendimento = trim($_POST['data_atendimento'] ?? '');
+        $observacoes = trim($_POST['observacoes'] ?? '');
+        $servicosPost = $_POST['servicos'] ?? [];
+        $quantidadesPost = $_POST['quantidades'] ?? [];
+        $tiposValidos = ['Orçamento', 'Agendamento', 'Realizado'];
+
+        try {
+            if (!$idAtendimento || !$idCliente || !$idVeiculo) {
+                throw new DomainException('Atendimento, cliente ou veículo inválido.');
+            }
+            if (!in_array($tipo, $tiposValidos, true)) {
+                throw new DomainException('Selecione um tipo de atendimento válido.');
+            }
+            if (!is_array($servicosPost) || !is_array($quantidadesPost) ||
+                count($servicosPost) < 1 || count($servicosPost) > 50) {
+                throw new DomainException('Adicione entre 1 e 50 serviços.');
+            }
+            if (strlen($observacoes) > 50000) {
+                throw new DomainException('As observações são muito longas.');
+            }
+
+            $dataObj = DateTimeImmutable::createFromFormat('!Y-m-d\TH:i', $dataAtendimento);
+            if (!$dataObj || $dataObj->format('Y-m-d\TH:i') !== $dataAtendimento) {
+                throw new DomainException('Informe uma data e hora válidas.');
+            }
+
+            $stmt = $pdo->prepare('SELECT id_atendimento FROM atendimentos WHERE id_atendimento = ?');
+            $stmt->execute([$idAtendimento]);
+            if (!$stmt->fetch()) {
+                throw new DomainException('Atendimento não encontrado.');
+            }
+
+            $stmt = $pdo->prepare('SELECT id_veiculo FROM veiculos WHERE id_veiculo = ? AND id_cliente = ?');
+            $stmt->execute([$idVeiculo, $idCliente]);
+            if (!$stmt->fetch()) {
+                throw new DomainException('O veículo não pertence ao cliente selecionado.');
+            }
+
+            // Não permite editar serviços/valor quando há pagamentos vinculados.
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM pagamentos WHERE id_atendimento = ?');
+            $stmt->execute([$idAtendimento]);
+            if ((int)$stmt->fetchColumn() > 0) {
+                throw new DomainException('Este atendimento possui pagamentos vinculados. Para proteger o histórico financeiro, a edição está bloqueada. Consulte os pagamentos antes de alterar este atendimento.');
+            }
+
+            $itens = [];
+            $vistos = [];
+            $total = 0.0;
+            foreach ($servicosPost as $indice => $idServicoPost) {
+                $idServico = filter_var($idServicoPost, FILTER_VALIDATE_INT);
+                $quantidade = filter_var($quantidadesPost[$indice] ?? null, FILTER_VALIDATE_INT);
+                if (!$idServico || !$quantidade || $quantidade < 1 || $quantidade > 1000 || isset($vistos[$idServico])) {
+                    throw new DomainException('Confira os serviços e quantidades. Não repita serviços.');
+                }
+                $vistos[$idServico] = true;
+                $stmt = $pdo->prepare('SELECT id_servico, valor_referencia FROM servicos WHERE id_servico = ? AND ativo = 1');
+                $stmt->execute([$idServico]);
+                $servico = $stmt->fetch();
+                if (!$servico) {
+                    throw new DomainException('Um dos serviços não existe ou está inativo.');
+                }
+                $valorUnitario = (float)$servico['valor_referencia'];
+                $valorItem = round($valorUnitario * $quantidade, 2);
+                $total = round($total + $valorItem, 2);
+                $itens[] = ['id_servico'=>$idServico, 'quantidade'=>$quantidade, 'valor_unitario'=>$valorUnitario, 'valor_total'=>$valorItem];
+            }
+
+            $pdo->beginTransaction();
+            $stmt = $pdo->prepare('UPDATE atendimentos SET id_cliente = ?, id_veiculo = ?, data_atendimento = ?, tipo_atendimento = ?, observacoes = ?, valor_total = ? WHERE id_atendimento = ?');
+            $stmt->execute([$idCliente, $idVeiculo, $dataObj->format('Y-m-d H:i:s'), $tipo, $observacoes !== '' ? $observacoes : null, number_format($total, 2, '.', ''), $idAtendimento]);
+
+            $stmt = $pdo->prepare('DELETE FROM itens_atendimento WHERE id_atendimento = ?');
+            $stmt->execute([$idAtendimento]);
+            $stmtItem = $pdo->prepare('INSERT INTO itens_atendimento (id_atendimento, id_servico, quantidade, valor_unitario, valor_total, custo_produto, custo_material) VALUES (?, ?, ?, ?, ?, 0, 0)');
+            foreach ($itens as $item) {
+                $stmtItem->execute([$idAtendimento, $item['id_servico'], $item['quantidade'], number_format($item['valor_unitario'], 2, '.', ''), number_format($item['valor_total'], 2, '.', '')]);
+            }
+            $pdo->commit();
+            header('Location: atendimentos.php?editado=1&id=' . $idAtendimento);
+            exit;
+        } catch (DomainException $ex) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            $erro = $ex->getMessage();
+        } catch (Throwable $ex) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            error_log($ex->getMessage());
+            $erro = 'Não foi possível editar o atendimento. Confira os dados e tente novamente.';
+        }
+    } elseif ($acao === 'cadastrar') {
         $idCliente = filter_input(INPUT_POST, 'id_cliente', FILTER_VALIDATE_INT);
         $idVeiculo = filter_input(INPUT_POST, 'id_veiculo', FILTER_VALIDATE_INT);
         $tipo = $_POST['tipo_atendimento'] ?? 'Orçamento';
@@ -202,10 +323,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+if (isset($_GET['status_atualizado'])) {
+    $sucesso = 'Status do atendimento #' . (int) ($_GET['id'] ?? 0) . ' atualizado com sucesso!';
+}
+
 if (isset($_GET['sucesso'])) {
     $sucesso = 'Atendimento #' .
         (int) ($_GET['id'] ?? 0) .
         ' cadastrado com sucesso!';
+}
+
+if (isset($_GET['editado'])) {
+    $sucesso = 'Atendimento #' . (int)($_GET['id'] ?? 0) . ' atualizado com sucesso!';
+}
+
+// Carrega registro e itens quando a tela está em modo de edição.
+$edicao = null;
+$itensEdicao = [];
+$idEdicao = filter_input(INPUT_GET, 'editar', FILTER_VALIDATE_INT);
+if ($idEdicao) {
+    $stmt = $pdo->prepare('SELECT * FROM atendimentos WHERE id_atendimento = ?');
+    $stmt->execute([$idEdicao]);
+    $edicao = $stmt->fetch();
+    if ($edicao) {
+        $stmt = $pdo->prepare('SELECT id_servico, quantidade FROM itens_atendimento WHERE id_atendimento = ? ORDER BY id_servico');
+        $stmt->execute([$idEdicao]);
+        $itensEdicao = $stmt->fetchAll();
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM pagamentos WHERE id_atendimento = ?');
+        $stmt->execute([$idEdicao]);
+        if ((int)$stmt->fetchColumn() > 0) {
+            $erro = 'Este atendimento possui pagamentos vinculados e não pode ser editado para evitar divergências financeiras.';
+            $edicao = null;
+        }
+    } else {
+        $erro = 'Atendimento não encontrado.';
+    }
 }
 
 // Carrega clientes, veículos e serviços ativos.
@@ -1119,11 +1271,11 @@ $totalFaturamento = array_sum(array_map(
             <div class="panel-heading">
                 <div>
                     <h2 class="panel-title">
-                        <i class="fa-solid fa-plus-circle"></i>
-                        Novo atendimento
+                        <i class="fa-solid <?= $edicao ? 'fa-pen-to-square' : 'fa-plus-circle' ?>"></i>
+                        <?= $edicao ? 'Editar atendimento #' . (int)$edicao['id_atendimento'] : 'Novo atendimento' ?>
                     </h2>
                     <p class="panel-description">
-                        Selecione o cliente, o veículo e os serviços desejados.
+                        <?= $edicao ? 'Altere os dados e os serviços do atendimento.' : 'Selecione o cliente, o veículo e os serviços desejados.' ?>
                     </p>
                 </div>
             </div>
@@ -1138,7 +1290,8 @@ $totalFaturamento = array_sum(array_map(
                 </div>
             <?php else: ?>
                 <form method="post" id="form-atendimento">
-                    <input type="hidden" name="acao" value="cadastrar">
+                    <input type="hidden" name="acao" value="<?= $edicao ? 'editar' : 'cadastrar' ?>">
+                    <?php if ($edicao): ?><input type="hidden" name="id_atendimento" value="<?= (int)$edicao['id_atendimento'] ?>"><?php endif; ?>
 
                     <div class="form-grid">
                         <label class="field">
@@ -1146,7 +1299,7 @@ $totalFaturamento = array_sum(array_map(
                             <select name="id_cliente" id="cliente" required>
                                 <option value="">Selecione o cliente</option>
                                 <?php foreach ($clientes as $cliente): ?>
-                                    <option value="<?= (int) $cliente['id_cliente'] ?>">
+                                    <option value="<?= (int) $cliente['id_cliente'] ?>" <?= $edicao && (int)$edicao['id_cliente'] === (int)$cliente['id_cliente'] ? 'selected' : '' ?>>
                                         <?= e($cliente['nome']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -1163,9 +1316,9 @@ $totalFaturamento = array_sum(array_map(
                         <label class="field">
                             Tipo de atendimento <span>*</span>
                             <select name="tipo_atendimento" required>
-                                <option value="Orçamento">Orçamento</option>
-                                <option value="Agendamento">Agendamento</option>
-                                <option value="Realizado">Realizado</option>
+                                <option value="Orçamento" <?= $edicao && $edicao['tipo_atendimento'] === 'Orçamento' ? 'selected' : '' ?>>Orçamento</option>
+                                <option value="Agendamento" <?= $edicao && $edicao['tipo_atendimento'] === 'Agendamento' ? 'selected' : '' ?>>Agendamento</option>
+                                <option value="Realizado" <?= $edicao && $edicao['tipo_atendimento'] === 'Realizado' ? 'selected' : '' ?>>Realizado</option>
                             </select>
                         </label>
 
@@ -1174,7 +1327,7 @@ $totalFaturamento = array_sum(array_map(
                             <input
                                 type="datetime-local"
                                 name="data_atendimento"
-                                value="<?= e(date('Y-m-d\TH:i')) ?>"
+                                value="<?= e($edicao ? date('Y-m-d\TH:i', strtotime($edicao['data_atendimento'])) : date('Y-m-d\TH:i')) ?>"
                                 required
                             >
                         </label>
@@ -1210,14 +1363,15 @@ $totalFaturamento = array_sum(array_map(
                             <textarea
                                 name="observacoes"
                                 placeholder="Adicione detalhes importantes sobre o veículo ou o atendimento..."
-                            ></textarea>
+                            ><?= e($edicao['observacoes'] ?? '') ?></textarea>
                         </label>
 
                         <div class="full form-actions">
                             <button class="btn" type="submit">
                                 <i class="fa-solid fa-floppy-disk"></i>
-                                Salvar atendimento
+                                <?= $edicao ? 'Salvar alterações' : 'Salvar atendimento' ?>
                             </button>
+                            <?php if ($edicao): ?><a class="btn btn-secondary" href="atendimentos.php">Cancelar edição</a><?php endif; ?>
                         </div>
                     </div>
                 </form>
@@ -1248,13 +1402,14 @@ $totalFaturamento = array_sum(array_map(
                         <th>Tipo</th>
                         <th>Status</th>
                         <th>Total</th>
+                        <th>Ações</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <?php if (!$atendimentos): ?>
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="empty-state">
                                     <i class="fa-solid fa-clipboard-list"></i>
                                     Nenhum atendimento cadastrado ainda.
@@ -1306,6 +1461,19 @@ $totalFaturamento = array_sum(array_map(
                                         R$ <?= number_format((float) $a['valor_total'], 2, ',', '.') ?>
                                     </strong>
                                 </td>
+                                <td>
+                                    <a class="btn btn-secondary" style="padding:9px 10px;margin-bottom:6px" href="atendimentos.php?editar=<?= (int)$a['id_atendimento'] ?>" title="Editar atendimento"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                                    <form method="post" class="status-form" onsubmit="return confirmarAlteracaoStatus(this);" style="display:flex;gap:6px;align-items:center;min-width:220px">
+                                        <input type="hidden" name="acao" value="alterar_status">
+                                        <input type="hidden" name="id_atendimento" value="<?= (int) $a['id_atendimento'] ?>">
+                                        <select name="status" aria-label="Status do atendimento #<?= (int) $a['id_atendimento'] ?>" style="max-width:145px">
+                                            <?php foreach (['Pendente', 'Em andamento', 'Concluído', 'Cancelado'] as $opcaoStatus): ?>
+                                                <option value="<?= e($opcaoStatus) ?>" <?= $a['status'] === $opcaoStatus ? 'selected' : '' ?>><?= e($opcaoStatus) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <button type="submit" class="btn btn-secondary" style="padding:9px 10px" title="Atualizar status"><i class="fa-solid fa-check"></i></button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -1325,11 +1493,21 @@ $totalFaturamento = array_sum(array_map(
 </div>
 
 <script>
+function confirmarAlteracaoStatus(form) {
+    const status = form.querySelector('select[name="status"]')?.value;
+    if (status === 'Cancelado') {
+        return confirm('Tem certeza de que deseja cancelar este atendimento? O registro será mantido no histórico. Se houver pagamentos vinculados, o sistema bloqueará o cancelamento.');
+    }
+    return confirm('Confirma a alteração do status deste atendimento?');
+}
 const clientesSelect = document.getElementById('cliente');
 const veiculosSelect = document.getElementById('veiculo');
 const itensContainer = document.getElementById('itens');
 const totalEl = document.getElementById('total');
 const botaoAdicionar = document.getElementById('adicionar');
+const idVeiculoEdicao = <?= $edicao ? (int)$edicao['id_veiculo'] : 'null' ?>;
+const itensEdicao = <?= json_encode($itensEdicao, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>;
+
 
 const veiculos = <?= json_encode(
     array_map(fn($v) => [
@@ -1496,7 +1674,27 @@ clientesSelect?.addEventListener('change', atualizarVeiculos);
 botaoAdicionar?.addEventListener('click', adicionarServico);
 
 if (clientesSelect) atualizarVeiculos();
-if (itensContainer && servicos.length > 0) adicionarServico();
+if (veiculosSelect && idVeiculoEdicao !== null) veiculosSelect.value = String(idVeiculoEdicao);
+if (itensContainer && servicos.length > 0) {
+    if (itensEdicao.length) {
+        itensEdicao.forEach(item => {
+            adicionarServico();
+            const linha = itensContainer.lastElementChild;
+            linha.querySelector('.servico').value = String(item.id_servico);
+            linha.querySelector('.quantidade').value = String(item.quantidade);
+        });
+        atualizarOpcoes();
+        atualizarTotal();
+    } else {
+        adicionarServico();
+    }
+}
+
+document.querySelectorAll('.status-form').forEach(form => {
+    form.addEventListener('submit', event => {
+        if (!confirm('Deseja realmente atualizar o status deste atendimento?')) event.preventDefault();
+    });
+});
 
 document.getElementById('form-atendimento')?.addEventListener('submit', event => {
     if (itensContainer.querySelectorAll('.item-linha').length === 0) {
