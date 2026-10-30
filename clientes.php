@@ -1234,21 +1234,23 @@ function e($valor)
 
     </main>
 </div>
-
 <script>
 (() => {
     const campoCep = document.getElementById('cep');
     const statusCep = document.getElementById('cep-status');
+
     const campos = {
         logradouro: document.getElementById('logradouro'),
         bairro: document.getElementById('bairro'),
         cidade: document.getElementById('cidade'),
         estado: document.getElementById('estado')
     };
+
     let consultaAtual = 0;
 
     campoCep.addEventListener('input', () => {
         let valor = campoCep.value.replace(/\D/g, '').slice(0, 8);
+
         campoCep.value = valor.length > 5
             ? valor.slice(0, 5) + '-' + valor.slice(5)
             : valor;
@@ -1262,21 +1264,25 @@ function e($valor)
             statusCep.textContent = 'Digite o CEP para buscar o endereço.';
             return;
         }
+
         if (cep.length !== 8) {
             statusCep.textContent = 'CEP incompleto. Informe os 8 números.';
             return;
         }
 
         statusCep.textContent = 'Consultando CEP...';
+
         try {
-            const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`, {
-                headers: { 'Accept': 'application/json' }
-            });
+            const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+
             if (!resposta.ok) throw new Error('Falha na consulta');
+
             const dados = await resposta.json();
+
             if (idConsulta !== consultaAtual) return;
+
             if (dados.erro) {
-                statusCep.textContent = 'CEP não encontrado. Confira ou preencha o endereço manualmente.';
+                statusCep.textContent = 'CEP não encontrado. Confira ou preencha manualmente.';
                 return;
             }
 
@@ -1284,13 +1290,28 @@ function e($valor)
             campos.bairro.value = dados.bairro || '';
             campos.cidade.value = dados.localidade || '';
             campos.estado.value = dados.uf || '';
+
             statusCep.textContent = 'Endereço preenchido. Confira os dados antes de salvar.';
         } catch (erro) {
             if (idConsulta !== consultaAtual) return;
-            statusCep.textContent = 'Não foi possível consultar o ViaCEP. Preencha o endereço manualmente.';
+            statusCep.textContent = 'Não foi possível consultar o ViaCEP. Preencha manualmente.';
         }
     });
 })();
+</script>
+
+<!-- VLibras - Acessibilidade -->
+<div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+    </div>
+</div>
+
+<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+<script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
 </script>
 
 </body>

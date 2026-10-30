@@ -1,159 +1,116 @@
 # 🚗 Garage V8
 
-Sistema de agendamento e orçamento para uma estética automotiva, desenvolvido como parte do **Projeto Integrador II (PI 2)**.
+**Sistema Web de Gestão para Estética Automotiva**
 
-O sistema tem como objetivo facilitar o atendimento aos clientes da Garage V8, permitindo a consulta de serviços, solicitação de orçamentos e agendamento de horários, além de oferecer ao proprietário ferramentas para gerenciamento dos serviços e atendimentos.
+O **Garage V8** é um sistema web desenvolvido para a empresa de estética automotiva Garage V8, localizada em Taubaté – SP, como parte do **Projeto Integrador II (PI 2)** da Universidade Virtual do Estado de São Paulo (UNIVESP).
 
----
+O projeto reúne uma plataforma institucional para divulgação dos serviços e um sistema administrativo voltado à centralização e ao gerenciamento das informações operacionais e financeiras da empresa.
 
-## 🎯 Objetivo do Projeto
-
-Desenvolver uma solução que centralize e automatize parte do processo de atendimento da estética automotiva, desde o primeiro contato do cliente até o agendamento e acompanhamento do serviço.
-
-A proposta é reduzir a necessidade de atendimento manual, facilitar a organização dos horários e melhorar a experiência do cliente.
-
-### Fluxo principal
-
-```text
-Cliente
-   ↓
-Consulta de serviços
-   ↓
-Escolha do veículo e serviço
-   ↓
-Solicitação de orçamento
-   ↓
-Escolha do horário
-   ↓
-Agendamento
-   ↓
-Confirmação pelo WhatsApp
-   ↓
-Realização do serviço
-   ↓
-Pós-venda
-````
+A solução busca facilitar a organização dos processos internos, otimizar o controle das atividades e proporcionar uma visão mais integrada da gestão empresarial.
 
 ---
 
-## ✨ Principais Funcionalidades  `A definir`
+## 🎯 Objetivo
 
-### 👤 Cliente  `A definir`
+Desenvolver uma solução web que contribua para a modernização da presença digital da Garage V8 e para a organização de seus processos administrativos, operacionais e financeiros.
 
-* Consultar serviços disponíveis
-* Consultar valores
-* Cadastrar dados pessoais
-* Cadastrar informações do veículo
-* Solicitar orçamento
-* Consultar horários disponíveis
-* Realizar agendamento
-* Receber confirmações e lembretes pelo WhatsApp
-* Receber notificações sobre o andamento do serviço
-* Avaliar o atendimento após a realização do serviço
+## 🖥️ Estrutura do Sistema
 
-### 🔧 Proprietário  `A definir`
+O projeto é composto por dois ambientes integrados:
 
-O acesso administrativo será exclusivo do proprietário da Garage V8.
+### 🌐 Site Institucional
 
-* Gerenciar serviços
-* Cadastrar e alterar valores
-* Gerenciar horários disponíveis
-* Visualizar agendamentos
-* Gerenciar clientes e veículos
-* Consultar histórico de serviços
-* Acompanhar orçamentos
-* Gerenciar informações utilizadas nas mensagens automáticas
+Plataforma pública para apresentação da empresa e divulgação de seus serviços.
 
----
+- Apresentação da Garage V8;
+- Divulgação dos serviços de estética automotiva;
+- Consulta de procedimentos e valores de referência;
+- Galeria de trabalhos realizados;
+- Informações de contato;
+- Acesso direto ao WhatsApp;
+- Interface responsiva.
 
-## 📱 Integração com WhatsApp  `A definir`
+### 🔐 Sistema Administrativo
 
-O sistema será integrado à **API do WhatsApp** para automatizar parte da comunicação com os clientes.
+Ambiente de acesso restrito ao administrador, destinado ao gerenciamento das atividades da empresa.
 
-Entre as possibilidades estão:
+- **Painel inicial:** indicadores e visão geral das informações;
+- **Clientes:** cadastro, consulta e edição de dados;
+- **Veículos:** cadastro e associação aos clientes;
+- **Serviços:** gerenciamento de procedimentos e valores;
+- **Atendimentos:** registro e gerenciamento dos serviços;
+- **Pagamentos:** controle de recebimentos e valores pendentes;
+- **Despesas:** registro e categorização dos gastos;
+- **Financeiro:** acompanhamento de receitas, despesas e resultados por meio de gráficos.
 
-* Confirmação de agendamento
-* Lembretes antes do horário marcado
-* Notificação quando o veículo estiver pronto
-* Pesquisa de satisfação
-* Orientações após serviços
-* Lembretes para manutenção estética
-* Comunicação de ofertas e benefícios
+## 🔌 Integrações
 
----
+**API de consulta de CEP**
 
-## 💡 Diferenciais e Ideias  `A definir`
+Implementada e integrada ao cadastro de clientes, permite consultar informações de endereço a partir do CEP informado, facilitando o preenchimento dos dados cadastrais.
 
-Durante o desenvolvimento, estão sendo estudadas funcionalidades que possam gerar valor para a Garage V8 e aumentar a fidelização dos clientes.
+## 🛠️ Tecnologias Utilizadas
 
-Algumas das ideias levantadas:
+| Área | Tecnologias |
+|---|---|
+| Frontend | HTML5, CSS3 e JavaScript |
+| Backend | PHP |
+| Banco de dados | MySQL |
+| Conexão com banco | PDO |
+| API | Consulta de CEP |
+| Ambiente local | Laragon e Apache |
+| Administração do banco | phpMyAdmin |
+| Versionamento | Git e GitHub |
 
-* 💰 Orçamento digital
-* 🚗 Histórico de serviços do veículo
-* ⭐ Pesquisa de satisfação
-* 🎁 Sistema de indicação
-* 🏆 Clube de pontos ou cashback
-* 🔔 Lembretes de manutenção estética
-* 📊 Dashboard de gestão
-* 📈 Relatórios de serviços e faturamento
-* 📍 Integração com mapas
-* 📩 Comunicação automatizada pelo WhatsApp
+## 🗃️ Banco de Dados
 
-As funcionalidades efetivamente implementadas serão definidas de acordo com os requisitos levantados durante o desenvolvimento do PI.
+O sistema utiliza o MySQL, com o banco de dados `garage_v8`, para armazenar e organizar as informações administrativas.
 
----
+Principais entidades:
 
-## 🛠️ Tecnologias  `A definir`
+- Usuários;
+- Clientes;
+- Veículos;
+- Serviços;
+- Atendimentos;
+- Pagamentos;
+- Despesas.
 
-> Esta seção será atualizada conforme a definição da arquitetura do projeto.
+## 📚 Documentação
 
-* Frontend: `A definir`
-* Backend: `A definir`
-* Banco de dados: `A definir`
-* API de comunicação: WhatsApp API
-* Controle de versão: Git / GitHub
+A documentação técnica e acadêmica do projeto será organizada na Wiki do GitHub, contemplando:
 
----
+- Levantamento de requisitos;
+- Pesquisa e referências bibliográficas;
+- Arquitetura do sistema;
+- Modelagem do banco de dados;
+- Regras de negócio;
+- Fluxos de funcionamento;
+- Interfaces e protótipos;
+- Integrações e APIs;
+- Evolução e etapas do desenvolvimento.
 
-## 📚 Documentação  `A definir`
+## 📊 Gerenciamento do Projeto
 
-A documentação detalhada do projeto será mantida na **Wiki do repositório**.
+O desenvolvimento utiliza as ferramentas do GitHub para organização e acompanhamento:
 
-### Wiki  `A definir`
+- **Issues:** registro de tarefas, correções e melhorias;
+- **Projects:** planejamento e acompanhamento das atividades;
+- **Wiki:** documentação técnica e acadêmica;
+- **Repository:** armazenamento e versionamento do código-fonte.
 
-* 📋 Requisitos
-* 🔎 Pesquisa e referências
-* 🏗️ Arquitetura do sistema
-* 🗃️ Banco de dados
-* 📐 Regras de negócio
-* 🧠 Decisões do projeto
-* 📅 Roadmap
-* 🔌 APIs e integrações
+## 🎓 Informações Acadêmicas
 
----
-
-## 📊 Organização do Desenvolvimento 
-
-O desenvolvimento será organizado utilizando as ferramentas do GitHub:
-
-**Issues**
-
-> Tarefas, problemas, discussões e funcionalidades.
-
-**Projects**
-
-> Organização e acompanhamento do andamento das tarefas.
-
-**Wiki**
-
-> Documentação e conhecimento do projeto.
+- **Instituição:** Universidade Virtual do Estado de São Paulo (UNIVESP);
+- **Curso:** Engenharia da Computação;
+- **Disciplina:** Projeto Integrador II (PI 2);
+- **Projeto:** Garage V8;
+- **Empresa parceira:** Garage V8;
+- **Localização:** Taubaté – SP;
+- **Ano:** 2026.
 
 ---
 
-## 🎓 Projeto Integrador II
+<sub>Projeto acadêmico desenvolvido com foco na aplicação de tecnologias web para a organização e modernização da gestão empresarial.</sub>
 
-Projeto desenvolvido como parte do **Projeto Integrador II (PI 2)**.
-
-**Instituição:** UNIVESP
-**Projeto:** Garage V8
-**Ano:** 2026
+**Garage V8 — Tecnologia e organização em cada detalhe.**
