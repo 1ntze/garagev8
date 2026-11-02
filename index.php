@@ -6,6 +6,12 @@ require_once __DIR__ . '/config/conexao.php';
 
 $stmt = $pdo->query("SELECT COUNT(*) AS total FROM usuarios");
 $totalUsuarios = (int) $stmt->fetch()['total'];
+
+$stmt = $pdo->query("SELECT COUNT(*) AS total FROM clientes");
+$totalClientes = (int) $stmt->fetch()['total'];
+
+$stmt = $pdo->query("SELECT COUNT(*) AS total FROM atendimentos");
+$totalAtendimentos = (int) $stmt->fetch()['total'];
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -743,11 +749,13 @@ $totalUsuarios = (int) $stmt->fetch()['total'];
 
                 <p class="stat-label">Clientes cadastrados</p>
 
-                <div class="number">—</div>
+                <div class="number">
+                    <?= $totalClientes ?>
+                </div>
 
                 <div class="stat-footer">
-                    <i class="fa-solid fa-clock"></i>
-                    <span>Indicador em implantação</span>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Dados carregados do sistema</span>
                 </div>
             </article>
 
@@ -761,11 +769,13 @@ $totalUsuarios = (int) $stmt->fetch()['total'];
 
                 <p class="stat-label">Atendimentos</p>
 
-                <div class="number">—</div>
+                <div class="number">
+                    <?= $totalAtendimentos ?>
+                </div>
 
                 <div class="stat-footer">
-                    <i class="fa-solid fa-clock"></i>
-                    <span>Indicador em implantação</span>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Dados carregados do sistema</span>
                 </div>
             </article>
 
