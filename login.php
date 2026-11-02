@@ -390,6 +390,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     color: #ef233c;
 }
 
+.esqueceu-senha {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.esqueceu-senha a {
+    color: #e32636;
+    font-size: 12px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.esqueceu-senha a:hover {
+    color: #ff6878;
+    text-decoration: underline;
+}
     </style>
 </head>
 
@@ -478,11 +494,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         >
                     </label>
 
-                            <button class="botao" type="submit">
-                         Entrar no sistema
-                    </button>
-                </form>
+                          <button class="botao" type="submit">
+    Entrar no sistema
+</button>
 
+<div class="esqueceu-senha">
+    <a href="esqueci-senha.php">Esqueceu sua senha?</a>
+</div>
+
+</form>
                 
 
                     <div class="login-security">
